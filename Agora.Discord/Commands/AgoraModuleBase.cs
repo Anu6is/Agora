@@ -1,75 +1,98 @@
 ﻿using Disqord.Bot;
-using Disqord.Gateway;
+using Emporia.Application.Common;
+using Emporia.Extensions.Discord.Domain;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Qmmands;
 using Sentry;
+using Command = Emporia.Application.Common.Command;
 
 namespace Agora.Discord.Commands
 {
-    public abstract class AgoraModuleBase : DiscordModuleBase
+    public abstract class AgoraModuleBase : DiscordGuildModuleBase
     {
-        private readonly ILogger _logger;
         private static int _activeCommands;
-
+        
         public IHub SentryHub { get; private set; }
         public IDisposable SentryScope { get; private set; }
+
+        public IDataAccessor Data { get; private set; }
+        public IMediator Mediator { get; private set; }
+        public IServiceScope MediatorScope { get; private set; }
+        public IDiscordGuildSettings GuildSettings { get; private set; }
+
 
         [DoNotInject]
         public bool RebootInProgress { get; set; } 
         [DoNotInject]
         public bool ShutdownInProgress { get; set; }
 
-        public AgoraModuleBase(ILogger<AgoraModuleBase> logger)
-        {
-            _logger = logger;
-        }
-
         protected override ValueTask BeforeExecutedAsync()
         {
             Interlocked.Increment(ref _activeCommands);
 
-            
+            //TODO - get settings for current guild 
 
-            using (var scope = Context.Services.CreateScope()) 
+            CreateMediatorScope();
+            CreateSentryScope();
+
+            return base.BeforeExecutedAsync();
+        }
+
+        public async Task<TResult> ExecuteAsync<TResult>(Command<TResult> command)
+        {
+            return await Mediator.Send(command);
+        }
+
+        public async Task<Unit> ExecuteAsync(Command command)
+        {
+            return await Mediator.Send(command);
+        }
+
+        protected override ValueTask AfterExecutedAsync()
+        {
+            Interlocked.Decrement(ref _activeCommands);           
+
+            SentryScope.Dispose();
+            MediatorScope.Dispose();
+
+            return base.AfterExecutedAsync();
+        }
+
+        private void CreateMediatorScope()
+        {
+            MediatorScope = Context.Services.CreateScope();
+            Data = MediatorScope.ServiceProvider.GetRequiredService<IDataAccessor>();
+            Mediator = MediatorScope.ServiceProvider.GetRequiredService<IMediator>();
+        }
+
+        private void CreateSentryScope()
+        {
+            using (var scope = Context.Services.CreateScope())
             {
-                SentryHub = scope.ServiceProvider.GetRequiredService<IHub>();                              
+                SentryHub = scope.ServiceProvider.GetRequiredService<IHub>();
 
                 SentryScope = SentryHub.PushScope();
-                
+
                 SentryHub.ConfigureScope(scope =>
                 {
                     scope.AddBreadcrumb($"Executing {Context.Command.Name}");
 
                     scope.SetTag("Command", Context.Command.Name);
-                    scope.SetTag("Context", Context.GuildId.HasValue ? $"Guild: {Context.GuildId}" : $"Direct: {Context.Author.Id}");
+                    scope.SetTag("Context", Context.GuildId.ToString());
 
                     scope.User = new User() { Id = Context.Author.Id.ToString(), Username = Context.Author.Tag };
-
-                    var guild = Context.Bot.GetGuild(Context.GuildId.GetValueOrDefault());
-                    var channel = Context.Bot.GetChannel(Context.GuildId.GetValueOrDefault(), Context.ChannelId);
 
                     scope.Contexts.TryAdd($"Message: {Context.Message.Id}",
                                           new
                                           {
-                                              Guild = guild?.Name ?? "Direct Message",
-                                              Channel = channel?.Name ?? Context.Author.Tag,
+                                              Guild = Context.Guild.Name,
+                                              Channel = Context.Channel.Name,
                                               Command = $"{Context.Command.FullAliases[0]} {Context.RawArguments}"
                                           });
                 });
             }
-
-            return base.BeforeExecutedAsync();  
-        }
-
-        protected override ValueTask AfterExecutedAsync()
-        {
-            Interlocked.Decrement(ref _activeCommands);
-            
-            SentryHub.AddBreadcrumb($"Exiting {Context.Command.Name}");
-            SentryScope.Dispose();
-            
-            return base.AfterExecutedAsync();
         }
 
         protected async Task WaitForCommandsAsync(int waitTimeInMinutes) 
@@ -100,7 +123,7 @@ namespace Agora.Discord.Commands
             }
             catch (TaskCanceledException)
             {
-                _logger.LogInformation("Task cancellation requested");
+                Logger.LogInformation("Task cancellation requested");
             }
         }
     }

@@ -9,6 +9,14 @@
 
   <ItemGroup>
     <PackageReference Include="Disqord.Bot" Version="1.0.0-176" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
@@ -25,6 +33,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Ophios\Repos\Emporia\Emporia.Migrations\Emporia.Migrations.csproj" />
+    <ProjectReference Include="..\..\..\Ophios\Repos\Emporia\Emporia\Emporia.csproj" />
+    <ProjectReference Include="..\..\Emporia.Extensions.Discord\Emporia.Extensions.Discord\Emporia.Extensions.Discord.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -34,6 +48,10 @@
 	<None Update="appsettings.Development.json">
 		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
+</ItemGroup>
+
+<ItemGroup>
+  <Folder Include="Services\Background\" />
 </ItemGroup>
 
 </Project>

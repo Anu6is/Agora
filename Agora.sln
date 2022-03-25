@@ -10,6 +10,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emporia", "..\..\Ophios\Repos\Emporia\Emporia\Emporia.csproj", "{CF245F87-836B-4DE6-AF74-3701E451C8A3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emporia.Extensions.Discord", "..\Emporia.Extensions.Discord\Emporia.Extensions.Discord\Emporia.Extensions.Discord.csproj", "{23113F7F-FDD8-45DB-B39A-A60E7BD56069}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emporia.Migrations", "..\..\Ophios\Repos\Emporia\Emporia.Migrations\Emporia.Migrations.csproj", "{EA209432-1BA6-4459-9D83-82B9698C6FC8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emporia.Persistence", "..\..\Ophios\Repos\Emporia\src\Emporia.Persistence\Emporia.Persistence.csproj", "{2A286BBF-8477-4AA0-B469-56738302EF56}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emporia.Processing", "..\..\Ophios\Repos\Emporia\src\Emporia.Processing\Emporia.Processing.csproj", "{E916F750-C627-403F-B232-8840D4AAFEF6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +30,26 @@ Global
 		{4D221356-B861-445C-B839-D41E86819AA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D221356-B861-445C-B839-D41E86819AA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D221356-B861-445C-B839-D41E86819AA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF245F87-836B-4DE6-AF74-3701E451C8A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF245F87-836B-4DE6-AF74-3701E451C8A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF245F87-836B-4DE6-AF74-3701E451C8A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF245F87-836B-4DE6-AF74-3701E451C8A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23113F7F-FDD8-45DB-B39A-A60E7BD56069}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23113F7F-FDD8-45DB-B39A-A60E7BD56069}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23113F7F-FDD8-45DB-B39A-A60E7BD56069}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23113F7F-FDD8-45DB-B39A-A60E7BD56069}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA209432-1BA6-4459-9D83-82B9698C6FC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA209432-1BA6-4459-9D83-82B9698C6FC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA209432-1BA6-4459-9D83-82B9698C6FC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA209432-1BA6-4459-9D83-82B9698C6FC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A286BBF-8477-4AA0-B469-56738302EF56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A286BBF-8477-4AA0-B469-56738302EF56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A286BBF-8477-4AA0-B469-56738302EF56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A286BBF-8477-4AA0-B469-56738302EF56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E916F750-C627-403F-B232-8840D4AAFEF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E916F750-C627-403F-B232-8840D4AAFEF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E916F750-C627-403F-B232-8840D4AAFEF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E916F750-C627-403F-B232-8840D4AAFEF6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
