@@ -1,6 +1,5 @@
 ﻿using Disqord.Bot;
 using Emporia.Application.Common;
-using Emporia.Extensions.Discord.Domain;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -20,8 +19,6 @@ namespace Agora.Discord.Commands
         public IDataAccessor Data { get; private set; }
         public IMediator Mediator { get; private set; }
         public IServiceScope MediatorScope { get; private set; }
-        public IDiscordGuildSettings GuildSettings { get; private set; }
-
 
         [DoNotInject]
         public bool RebootInProgress { get; set; } 

@@ -21,13 +21,15 @@ namespace Agora.Discord.Extensions
             foreach (Type serviceType in types)
                 services.AddService(serviceType);
 
+            services.AddFusionCache();
+
             return services;
         }
 
         private static void AddService(this IServiceCollection services, Type serviceType)
         {
             var implementationTypes = serviceType.GetImplementations().ToImmutableArray();
-            var scope = serviceType.GetCustomAttribute<AgoraServiceAttribute>()?.Scope ?? ServiceLifetime.Scoped;
+            var scope = serviceType.GetCustomAttribute<AgoraServiceAttribute>()?.Scope ?? ServiceLifetime.Singleton;
 
             if (implementationTypes.Length == 0)
                 services.SetLifetime(scope, serviceType);

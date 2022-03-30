@@ -12,7 +12,6 @@ namespace Agora.Discord.Commands
     {
         public IHost ApplicationHost { get; set; }
 
-
         [Command("test")]
         public DiscordCommandResult Test() => Reply("Success!");
 
