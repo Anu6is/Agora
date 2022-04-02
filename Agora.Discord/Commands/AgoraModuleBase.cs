@@ -1,5 +1,6 @@
 ﻿using Disqord.Bot;
 using Emporia.Application.Common;
+using Emporia.Extensions.Discord;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -19,22 +20,28 @@ namespace Agora.Discord.Commands
         public IDataAccessor Data { get; private set; }
         public IMediator Mediator { get; private set; }
         public IServiceScope MediatorScope { get; private set; }
+        public IEmporiaCacheService Cache { get; private set; }
+        public IDiscordGuildSettings Settings { get; private set; }
 
         [DoNotInject]
         public bool RebootInProgress { get; set; } 
         [DoNotInject]
         public bool ShutdownInProgress { get; set; }
+        public IGuildSettingsService SettingsService { get; set; }
 
-        protected override ValueTask BeforeExecutedAsync()
+        protected override async ValueTask BeforeExecutedAsync()
         {
             Interlocked.Increment(ref _activeCommands);
 
-            //TODO - get settings for current guild 
+            Settings = await SettingsService.GetGuildSettingsAsync(Context.GuildId);
+            Cache = Context.Services.GetRequiredService<IEmporiaCacheService>();
 
             CreateMediatorScope();
             CreateSentryScope();
 
-            return base.BeforeExecutedAsync();
+            await base.BeforeExecutedAsync();
+
+            return;
         }
 
         public async Task<TResult> ExecuteAsync<TResult>(Command<TResult> command)

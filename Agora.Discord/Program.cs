@@ -1,4 +1,4 @@
-﻿using Agora.Discord;
+﻿using Agora.Addons.Disqord;
 using Emporia.Persistence.Extensions;
 using Microsoft.Extensions.Hosting;
 

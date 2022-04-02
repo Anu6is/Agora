@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Agora.Discord.Services
+namespace Agora.Shared.Services
 {
     public abstract class AgoraService
     {

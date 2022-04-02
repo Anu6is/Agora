@@ -1,4 +1,6 @@
-﻿using Disqord.Bot;
+﻿using Agora.Shared.Attributes;
+using Agora.Shared.Services;
+using Disqord.Bot;
 using Emporia.Application.Common;
 using Emporia.Domain.Common;
 using Microsoft.Extensions.Logging;

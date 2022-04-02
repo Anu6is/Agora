@@ -26,6 +26,6 @@ namespace Agora.Discord.Commands
 
             await WaitForCommandsAsync(1);
             await ApplicationHost.StopAsync(Context.Bot.StoppingToken);
-        }
+        }       
     }
 }

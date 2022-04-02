@@ -8,11 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Extensions\EmbedExtensions.cs" />
-    <Compile Remove="Extensions\GuildSettingsExtensions.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Disqord.Bot" Version="1.0.0-176" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.3">
       <PrivateAssets>all</PrivateAssets>
@@ -24,25 +19,13 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
-    <PackageReference Include="Sentry" Version="3.15.0" />
-    <PackageReference Include="Sentry.Extensions.Logging" Version="3.15.0" />
-    <PackageReference Include="Sentry.Serilog" Version="3.15.0" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
-    <PackageReference Include="Serilog.Settings.Configuration" Version="3.3.0" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
-    <PackageReference Include="ZiggyCreatures.FusionCache" Version="0.9.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Ophios\Repos\Emporia.Extensions.Discord\src\Emporia.Extensions.Discord.csproj" />
     <ProjectReference Include="..\..\..\Ophios\Repos\Emporia\Emporia.Migrations\Emporia.Migrations.csproj" />
-    <ProjectReference Include="..\..\..\Ophios\Repos\Emporia\Emporia\Emporia.csproj" />
     <ProjectReference Include="..\..\Agora.Addons.Disqord\Agora.Addons.Disqord\Agora.Addons.Disqord.csproj" />
+    <ProjectReference Include="..\Agora.Shared\Agora.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

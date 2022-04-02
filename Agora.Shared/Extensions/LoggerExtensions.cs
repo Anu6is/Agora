@@ -5,9 +5,9 @@ using Microsoft.Extensions.Logging.Console;
 using Sentry.Extensions.Logging;
 using Serilog;
 
-namespace Agora.Discord.Logging
+namespace Agora.Shared.Extensions
 {
-    internal static class LoggerExtensions
+    public static class LoggerExtensions
     {
         public static ILoggingBuilder ReplaceDefaultLogger(this ILoggingBuilder builder)
         {
@@ -22,7 +22,7 @@ namespace Agora.Discord.Logging
         }
 
         public static ILoggingBuilder AddSentry(this ILoggingBuilder builder, HostBuilderContext context)
-{
+        {
             builder.Services.Configure<SentryLoggingOptions>(context.Configuration.GetSection("Sentry"));
             builder.AddSentry();
 

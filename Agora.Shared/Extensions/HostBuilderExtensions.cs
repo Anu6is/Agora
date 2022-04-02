@@ -1,32 +1,48 @@
-﻿using Agora.Discord.Services;
+﻿using Agora.Shared.Attributes;
+using Agora.Shared.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Collections.Immutable;
 using System.Reflection;
-using ServiceLifetime = Agora.Discord.Services.AgoraServiceAttribute.ServiceLifetime;
+using ServiceLifetime = Agora.Shared.Attributes.AgoraServiceAttribute.ServiceLifetime;
 
-namespace Agora.Discord.Extensions
+namespace Agora.Shared.Extensions
 {
-    internal static class HostBuilderExtensions
+    public static class HostBuilderExtensions
     {
         public static IHostBuilder ConfigureCustomAgoraServices(this IHostBuilder builder)
         {
-            return builder.ConfigureServices((context, services) => services.ConfigureAgora());
+            return builder.ConfigureServices((context, services) => services.ConfigureAgora().WithAgoraSharedServices());
         }
 
         public static IServiceCollection ConfigureAgora(this IServiceCollection services)
         {
+            var types = Assembly.GetEntryAssembly().GetTypes().Where(type => type.IsAssignableTo(typeof(AgoraService)) && !type.IsAbstract).ToImmutableArray();
+
+            foreach (Type serviceType in types)
+                services.AddAgoraService(serviceType);
+
+            return services;
+        }
+
+        public static IHostBuilder AddAgoraSharedServices(this IHostBuilder builder)
+        {
+            return builder.ConfigureServices((context, services) => services.WithAgoraSharedServices());
+        }
+
+        public static IServiceCollection WithAgoraSharedServices(this IServiceCollection services)
+        {
             var types = Assembly.GetExecutingAssembly().GetTypes().Where(type => type.IsAssignableTo(typeof(AgoraService)) && !type.IsAbstract).ToImmutableArray();
 
             foreach (Type serviceType in types)
-                services.AddService(serviceType);
+                services.AddAgoraService(serviceType);
 
             services.AddFusionCache();
 
             return services;
         }
 
-        private static void AddService(this IServiceCollection services, Type serviceType)
+        public static void AddAgoraService(this IServiceCollection services, Type serviceType)
         {
             var implementationTypes = serviceType.GetImplementations().ToImmutableArray();
             var scope = serviceType.GetCustomAttribute<AgoraServiceAttribute>()?.Scope ?? ServiceLifetime.Singleton;
@@ -61,6 +77,5 @@ namespace Agora.Discord.Extensions
             else
                 return type.GetInterfaces().Except(type.BaseType.GetInterfaces());
         }
-
     }
 }

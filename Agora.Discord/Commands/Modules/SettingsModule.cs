@@ -4,7 +4,6 @@ using Agora.Addons.Disqord.Menus.View;
 using Disqord.Bot;
 using Emporia.Application.Features.Commands;
 using Emporia.Domain.Common;
-using Emporia.Extensions.Discord;
 using Emporia.Extensions.Discord.Features.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using Qmmands;
@@ -14,8 +13,7 @@ namespace Agora.Discord.Commands.Modules
     [Group("Server")]
     public sealed class SettingsModule : AgoraModuleBase
     {
-        public IGuildSettingsService SettingsService { get; set; }
-
+        [RequireUnregisteredServer]
         [Command("Setup")]
         public async Task<DiscordCommandResult> ServerSetup()
         {
@@ -40,11 +38,14 @@ namespace Agora.Discord.Commands.Modules
 
             return Reply("Server setup successful!");
         }
-        
+
         [RequireSetup]
         [Command("Settings")]
         public async Task<DiscordCommandResult> ServerSettings()
-            => View(new MainSettingsView(new GuildSettingsContext(await SettingsService.GetGuildSettingsAsync(Context.GuildId), Context.Services.CreateScope().ServiceProvider)));
+        {
+            await Cache.GetEmporiumAsync(Context.GuildId);            
+            return View(new MainSettingsView(new GuildSettingsContext(Settings, Context.Services.CreateScope().ServiceProvider)));
+        }
 
         [RequireSetup]
         [Command("Reset")]
