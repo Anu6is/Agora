@@ -1,5 +1,6 @@
 ﻿using Disqord.Bot;
 using Emporia.Application.Common;
+using Emporia.Domain.Common;
 using Emporia.Extensions.Discord;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +29,10 @@ namespace Agora.Discord.Commands
         [DoNotInject]
         public bool ShutdownInProgress { get; set; }
         public IGuildSettingsService SettingsService { get; set; }
+
+        public EmporiumId EmporiumId => new(Context.GuildId);
+        public ShowroomId ShowroomId => new(Context.ChannelId);
+
 
         protected override async ValueTask BeforeExecutedAsync()
         {
