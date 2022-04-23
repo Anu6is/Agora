@@ -5,7 +5,7 @@ namespace Agora.Shared.Extensions
 {
     public static class ModelExtensions
     {
-        public static ShowroomModel ToShowroomModel(this ShowroomDetailsResponse response) => new ShowroomModel(response.ShowroomId.Value)
+        public static ShowroomModel ToShowroomModel(this ShowroomDetailsResponse response) => new(response.ShowroomId)
         {
             ItemType = response.ItemType,
             OpensAt = response.OpensAt,

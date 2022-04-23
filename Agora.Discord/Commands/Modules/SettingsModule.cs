@@ -1,11 +1,14 @@
 ﻿using Agora.Addons.Disqord.Checks;
 using Agora.Addons.Disqord.Menus;
 using Agora.Addons.Disqord.Menus.View;
+using Agora.Shared.Cache;
 using Agora.Shared.Extensions;
 using Disqord;
 using Disqord.Bot;
+using Emporia.Application.Common;
 using Emporia.Application.Features.Commands;
 using Emporia.Domain.Common;
+using Emporia.Domain.Entities;
 using Emporia.Extensions.Discord;
 using Emporia.Extensions.Discord.Features.Commands;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,6 +32,8 @@ namespace Agora.Discord.Commands
             
             await Data.BeginTransactionAsync(async () =>
             {
+                Context.Services.GetRequiredService<ICurrentUserService>().CurrentUser = EmporiumUser.Create(EmporiumId, ReferenceNumber.Create(Context.GuildId));
+                
                 var time = serverTime is null ? Time.From(DateTimeOffset.UtcNow.TimeOfDay) : Time.From(serverTime);
                 var emporium = await ExecuteAsync(new CreateEmporiumCommand(EmporiumId) { LocalTime = time });
                 var currency = await ExecuteAsync(new CreateCurrencyCommand(EmporiumId, symbol, decimalPlaces));
@@ -40,6 +45,7 @@ namespace Agora.Discord.Commands
                 });
 
                 await SettingsService.AddGuildSettingsAsync(settings);
+                await Cache.AddEmporiumAsync(emporium);
             });
 
             var settingsContext = new GuildSettingsContext(Context.Guild, settings, Context.Services.CreateScope().ServiceProvider);
@@ -75,8 +81,9 @@ namespace Agora.Discord.Commands
         public async Task<DiscordCommandResult> ServerReset()
         {
             await ExecuteAsync(new DeleteEmporiumCommand(new EmporiumId(Context.GuildId)));
-            await Cache.RemoveEmporiumAsync(Context.GuildId);
             
+            (Cache as EporiaCacheService).Clear(Context.GuildId);
+
             return Reply("Server reset successful!");
         }
     }

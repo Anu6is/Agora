@@ -26,14 +26,14 @@ namespace Agora.Shared.Cache
 
         public async ValueTask<IDiscordGuildSettings> GetGuildSettingsAsync(ulong guildId)
         {
-            using var scope = _serviceProvider.CreateScope();
-            var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-
             return await _settingsCache.GetOrSetAsync<IDiscordGuildSettings>(
                            $"settings:{guildId}",
                            async cts =>
                            {
+                               using var scope = _serviceProvider.CreateScope();
+                               var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
                                var result = await mediator.Send(new GetGuildSettingsDetailsQuery(guildId), cts);
+                               
                                return result.Data;
                            },
                            TimeSpan.FromMinutes(CacheExpirationInMinutes));

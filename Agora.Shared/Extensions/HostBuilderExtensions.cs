@@ -34,24 +34,23 @@ namespace Agora.Shared.Extensions
         {
             var types = Assembly.GetExecutingAssembly().GetTypes().Where(type => type.IsAssignableTo(typeof(AgoraService)) && !type.IsAbstract).ToImmutableArray();
 
-            foreach (Type serviceType in types)
-                services.AddAgoraService(serviceType);
+            foreach (Type type in types)
+                services.AddAgoraService(type);
 
             services.AddFusionCache();
 
             return services;
         }
 
-        public static void AddAgoraService(this IServiceCollection services, Type serviceType)
+        public static void AddAgoraService(this IServiceCollection services, Type type)
         {
-            var implementationTypes = serviceType.GetImplementations().ToImmutableArray();
-            var scope = serviceType.GetCustomAttribute<AgoraServiceAttribute>()?.Scope ?? ServiceLifetime.Singleton;
-
-            if (implementationTypes.Length == 0)
-                services.SetLifetime(scope, serviceType);
-            else
-                foreach (var implementationType in implementationTypes)
-                    services.SetLifetime(scope, serviceType, implementationType);
+            var serviceInterfaces = type.GetServiceInterfaces().ToImmutableArray();
+            var scope = type.GetCustomAttribute<AgoraServiceAttribute>()?.Scope ?? ServiceLifetime.Singleton;
+                
+            services.SetLifetime(scope, type);
+            
+            foreach (var serviceType in serviceInterfaces)
+                services.SetLifetime(scope, type, serviceType);
         }
 
         private static IServiceCollection SetLifetime(this IServiceCollection services, ServiceLifetime scope, Type serviceType) => scope switch
@@ -62,15 +61,15 @@ namespace Agora.Shared.Extensions
             _ => services,
         };
 
-        private static IServiceCollection SetLifetime(this IServiceCollection services, ServiceLifetime scope, Type serviceType, Type implementationType) => scope switch
+        private static IServiceCollection SetLifetime(this IServiceCollection services, ServiceLifetime scope, Type implementationType, Type serviceType) => scope switch
         {
-            ServiceLifetime.Singleton => services.AddSingleton(implementationType, serviceType),
-            ServiceLifetime.Transient => services.AddTransient(implementationType, serviceType),
-            ServiceLifetime.Scoped => services.AddScoped(implementationType, serviceType),
+            ServiceLifetime.Singleton => services.AddSingleton(serviceType, implementationType),
+            ServiceLifetime.Transient => services.AddTransient(serviceType, implementationType),
+            ServiceLifetime.Scoped => services.AddScoped(serviceType, implementationType),
             _ => services,
         };
 
-        private static IEnumerable<Type> GetImplementations(this Type type)
+        private static IEnumerable<Type> GetServiceInterfaces(this Type type)
         {
             if (type.BaseType == null)
                 return type.GetInterfaces();

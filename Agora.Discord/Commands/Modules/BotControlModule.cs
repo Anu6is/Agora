@@ -1,4 +1,5 @@
-﻿using Disqord;
+﻿using Agora.Shared.Cache;
+using Disqord;
 using Disqord.Bot;
 using Disqord.Gateway;
 using Emporia.Application.Common;
@@ -21,11 +22,11 @@ namespace Agora.Discord.Commands
             Logger.LogInformation("Shutdown requested");
 
             ShutdownInProgress = true;
-
+            
             await Context.Bot.SetPresenceAsync(UserStatus.DoNotDisturb);
 
             await WaitForCommandsAsync(1);
             await ApplicationHost.StopAsync(Context.Bot.StoppingToken);
-        }       
+        }
     }
 }
