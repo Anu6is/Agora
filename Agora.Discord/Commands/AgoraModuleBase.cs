@@ -1,4 +1,5 @@
 ﻿using Disqord.Bot;
+using Disqord.Gateway;
 using Emporia.Application.Common;
 using Emporia.Domain.Common;
 using Emporia.Extensions.Discord;
@@ -6,6 +7,7 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Qmmands;
+using Sentry;
 using Command = Emporia.Application.Common.Command;
 
 namespace Agora.Discord.Commands
@@ -21,16 +23,23 @@ namespace Agora.Discord.Commands
 
         public IDataAccessor Data { get; private set; }
         public IMediator Mediator { get; private set; }
+        public ITransaction Transaction { get; private set; }
         public IEmporiaCacheService Cache { get; private set; }
         public IDiscordGuildSettings Settings { get; private set; }
         public IGuildSettingsService SettingsService { get; set; }
 
         public EmporiumId EmporiumId => new(Context.GuildId);
         public ShowroomId ShowroomId => new(Context.ChannelId);
-
+        
         protected override async ValueTask BeforeExecutedAsync()
         {
             Interlocked.Increment(ref _activeCommands);
+
+            Transaction = SentrySdk.StartTransaction(Context.Command.Module.Name, Context.Command.Name, $"Shard#{Context.Bot.GetShardId(Context.GuildId).Id}");
+            Transaction.User = new User() { Id = Context.Author.Id.ToString(), Username = Context.Author.Tag };
+            Transaction.SetTag("guild", Context.Guild.Id.ToString());
+            Transaction.SetTag("channel", Context.Channel.Id.ToString());
+            Transaction.SetExtra("active_commands", _activeCommands);
 
             Settings = await SettingsService.GetGuildSettingsAsync(Context.GuildId);
             Cache = Context.Services.GetRequiredService<IEmporiaCacheService>();
@@ -55,7 +64,9 @@ namespace Agora.Discord.Commands
         protected override ValueTask AfterExecutedAsync()
         {
             Interlocked.Decrement(ref _activeCommands);
-
+            
+            Transaction.Finish();
+            
             return base.AfterExecutedAsync();
         }
       

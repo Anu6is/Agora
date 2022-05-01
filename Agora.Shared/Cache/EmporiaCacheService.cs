@@ -144,7 +144,7 @@ namespace Agora.Shared.Cache
                                using var scope = _serviceProvider.CreateScope();
                                var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
                                var filter = new ShowroomFilter(new EmporiumId(guildId)) { IsPagingEnabled = true, PageNumber = pageNumber };
-                               var result = await mediator.Send(new GetShowroomListQuery(filter) { Cache = true }, cts);
+                               var result = await mediator.Send(new GetPagedShowroomQuery(filter) { Cache = true }, cts);
                                return result;
                            },
                            TimeSpan.FromMinutes(ShortCacheExpirtionInMinutes),
