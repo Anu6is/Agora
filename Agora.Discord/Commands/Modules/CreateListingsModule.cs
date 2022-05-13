@@ -2,15 +2,12 @@
 using Disqord;
 using Disqord.Bot;
 using Emporia.Application.Common;
-using Emporia.Application.Features;
 using Emporia.Application.Features.Commands;
+using Emporia.Application.Models;
 using Emporia.Domain.Common;
-using Emporia.Domain.Entities;
 using Emporia.Extensions.Discord;
 using Emporia.Extensions.Discord.Features.Commands;
-using Microsoft.Extensions.DependencyInjection;
 using Qmmands;
-using static Disqord.Rest.Api.Route;
 
 namespace Agora.Discord.Commands
 {
@@ -37,7 +34,7 @@ namespace Agora.Discord.Commands
                 [Description("Category the item is associated with")] CategoryTitle category = null,
                 [Description("Subcategory to list the item under. Requires category.")] SubcategoryTitle subcategory = null,
                 [Description("Additional information about the item.")] ProductDescription description = null, 
-                [Description("A hidden message to be sent to the winner.")] HiddenMessage mesage = null,
+                [Description("A hidden message to be sent to the winner.")] HiddenMessage message = null,
                 [Description("Item owner. Defaults to the command user.")] IMember owner = null,
                 [Description("True to hide the item owner.")] bool anonymous = false)
             {
@@ -45,10 +42,10 @@ namespace Agora.Discord.Commands
 
                 quantity ??= Stock.Create(1);
                 currency ??= Settings.DefaultCurrency.Symbol;
-                scheduledStart ??= emporium.LocalTime.DateTime.AddSeconds(5);
+                scheduledStart ??= emporium.LocalTime.DateTime.AddSeconds(3);
                 
                 var scheduledEnd = scheduledStart.Value.Add(duration);
-                var showroom = new ShowroomModel(EmporiumId, ShowroomId, "AuctionItem");
+                var showroom = new ShowroomModel(EmporiumId, ShowroomId, ListingType.Auction);
                 var item = new AuctionItemModel(title, currency, startingPrice, quantity)
                 {
                     ImageUrl = imageUrl,
@@ -66,7 +63,7 @@ namespace Agora.Discord.Commands
                 var listing = new StandardAuctionModel(scheduledStart.Value, scheduledEnd, new UserId(userDetails.UserId))
                 { 
                     BuyNowPrice = buyNowPrice, 
-                    HiddenMessage = mesage, 
+                    HiddenMessage = message, 
                     Anonymous = anonymous 
                 };
 
@@ -77,6 +74,55 @@ namespace Agora.Discord.Commands
                 return Reply("Auction created.");
             }
 
+            [Command("Market")]
+            public async Task<DiscordCommandResult> CreateStandarMarket(
+                [Description("Length of time the item is available.")] TimeSpan duration,
+                [Description("Title of the item to be sold.")] ProductTitle title,
+                [Description("Price at which the item is being sold.")] decimal price,
+                [Description("Currency to use. Defaults to server default")] string currency = null,
+                [Description("When the item would be available. Defaults to now.")] DateTime? scheduledStart = null,
+                [Description("Quantity available. Defaults to 1.")] Stock quantity = null,
+                [Description("Price for one item. Quantity must be more than 1")] decimal pricePerUnit = 0,
+                [Description("Url of image to include. Can also be attached.")] string imageUrl = null,
+                [Description("Category the item is associated with")] CategoryTitle category = null,
+                [Description("Subcategory to list the item under. Requires category.")] SubcategoryTitle subcategory = null,
+                [Description("Additional information about the item.")] ProductDescription description = null,
+                [Description("A hidden message to be sent to the buyer.")] HiddenMessage message = null,
+                [Description("Item owner. Defaults to the command user.")] IMember owner = null,
+                [Description("True to hide the item owner.")] bool anonymous = false)
+            {
+                var emporium = await Cache.GetEmporiumAsync(Context.GuildId);
+
+                quantity ??= Stock.Create(1);
+                currency ??= Settings.DefaultCurrency.Symbol;
+                scheduledStart ??= emporium.LocalTime.DateTime.AddSeconds(3);
+
+                var scheduledEnd = scheduledStart.Value.Add(duration);
+                var showroom = new ShowroomModel(EmporiumId, ShowroomId, ListingType.Market);
+                var item = new MarketItemModel(title, currency, price, quantity)
+                {
+                    ImageUrl = imageUrl,
+                    Category = category,
+                    Subcategory = subcategory,
+                    Description = description
+                };
+
+                var ownerId = owner?.Id ?? Context.Author.Id;
+                var userDetails = await Cache.GetUserAsync(Context.GuildId, ownerId);
+
+                var listing = new StandardMarketModel(scheduledStart.Value, scheduledEnd, new UserId(userDetails.UserId))
+                {
+                    CostPerItem = pricePerUnit,
+                    HiddenMessage = message,
+                    Anonymous = anonymous
+                };
+
+                await ExecuteAsync(new CreateStandardMarketCommand(showroom, item, listing));
+
+                _ = ExecuteAsync(new UpdateGuildSettingsCommand((DefaultDiscordGuildSettings)Settings));
+
+                return Reply("Market listing created.");
+            }
         }
         
     }

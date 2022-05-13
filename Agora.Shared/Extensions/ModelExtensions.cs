@@ -7,7 +7,7 @@ namespace Agora.Shared.Extensions
     {
         public static ShowroomModel ToShowroomModel(this ShowroomDetailsResponse response) => new(response.ShowroomId)
         {
-            ItemType = response.ItemType,
+            ListingType = response.ItemType,
             OpensAt = response.OpensAt,
             ClosesAt = response.ClosesAt,
             IsActive = response.IsActive

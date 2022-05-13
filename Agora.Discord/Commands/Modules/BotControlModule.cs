@@ -1,5 +1,4 @@
-﻿using Agora.Shared.Cache;
-using Disqord;
+﻿using Disqord;
 using Disqord.Bot;
 using Disqord.Gateway;
 using Emporia.Application.Common;

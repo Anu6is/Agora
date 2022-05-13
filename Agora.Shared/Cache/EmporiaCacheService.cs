@@ -113,7 +113,7 @@ namespace Agora.Shared.Cache
         public ValueTask RemoveShowroomAsync(ulong channelId, string itemType)
             => _emporiumCache.RemoveAsync($"showroom:{channelId}:{itemType}");
 
-        public async ValueTask<ShowroomDetailsResponse> GetShowroomAsync(ulong guildId, ulong channelId, string itemType)
+        public async ValueTask<ShowroomDetailsResponse> GetShowroomAsync(ulong guildId, ulong channelId, ListingType itemType)
         {
             if (!Tokens.ContainsKey(guildId))
                 Tokens.TryAdd(guildId, new CancellationTokenSource());
