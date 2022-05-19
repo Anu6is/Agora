@@ -13,6 +13,9 @@ namespace Agora.Discord.Commands
 {
     [RequireSetup]
     [Group("Create")]
+    //send messsage permissions
+    //send embed permissions
+    //create thread permissions
     public class CreateListingsModule : AgoraModuleBase
     {
         [Group("Standard")]

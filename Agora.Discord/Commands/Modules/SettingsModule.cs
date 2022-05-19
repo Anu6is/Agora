@@ -8,7 +8,6 @@ using Disqord.Bot;
 using Emporia.Application.Common;
 using Emporia.Application.Features.Commands;
 using Emporia.Domain.Common;
-using Emporia.Domain.Entities;
 using Emporia.Extensions.Discord;
 using Emporia.Extensions.Discord.Features.Commands;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,8 +18,9 @@ namespace Agora.Discord.Commands
     [Group("Server")]
     public sealed class SettingsModule : AgoraModuleBase
     {
-        [RequireUnregisteredServer]
         [Command("Setup")]
+        [SkipAuthentication]
+        [RequireUnregisteredServer]
         public async Task<DiscordCommandResult> ServerSetup(
             [Description("Log all sold/expired items to this channel.")] ITextChannel resultLog,
             [Description("Log all item activity to this channel.")] ITextChannel auditLog = null,
@@ -32,8 +32,6 @@ namespace Agora.Discord.Commands
             
             await Data.BeginTransactionAsync(async () =>
             {
-                Context.Services.GetRequiredService<ICurrentUserService>().CurrentUser = EmporiumUser.Create(EmporiumId, ReferenceNumber.Create(Context.GuildId));
-                
                 var time = serverTime is null ? Time.From(DateTimeOffset.UtcNow.TimeOfDay) : Time.From(serverTime);
                 var emporium = await ExecuteAsync(new CreateEmporiumCommand(EmporiumId) { LocalTime = time });
                 var currency = await ExecuteAsync(new CreateCurrencyCommand(EmporiumId, symbol, decimalPlaces));

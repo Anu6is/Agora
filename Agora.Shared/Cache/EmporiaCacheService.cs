@@ -88,8 +88,8 @@ namespace Agora.Shared.Cache
                 {
                     using var scope = _serviceProvider.CreateScope();
                     var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-
-                    var result = await mediator.Send(new GetEmporiumUserDetailsQuery(new EmporiumId(guildId), ReferenceNumber.Create(userId)) { Cache = true }, cts);
+                    
+                    var result = await mediator.Send(new GetEmporiumUserDetailsQuery(new EmporiumId(guildId), ReferenceNumber.Create(userId)), cts);
 
                     if (result.Data == null)
                     {
@@ -124,7 +124,7 @@ namespace Agora.Shared.Cache
                 {
                     using var scope = _serviceProvider.CreateScope();
                     var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-                    var result = await mediator.Send(new GetShowroomDetailsQuery(new EmporiumId(guildId), new ShowroomId(channelId), itemType) { Cache = true }, cts);
+                    var result = await mediator.Send(new GetShowroomDetailsQuery(new EmporiumId(guildId), new ShowroomId(channelId), itemType), cts);
 
                     return result.Data;
                 },

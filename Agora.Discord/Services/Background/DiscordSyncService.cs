@@ -8,7 +8,6 @@ namespace Agora.Discord.Services
     {
         protected override async ValueTask OnReady(ReadyEventArgs e)
         {
-            //TODO - what do we do on startup? Get expiring items
             await Client.SetPresenceAsync(UserStatus.Online);
             
             return;
