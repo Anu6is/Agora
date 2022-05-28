@@ -89,7 +89,7 @@ namespace Agora.Shared.Cache
                     using var scope = _serviceProvider.CreateScope();
                     var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
                     
-                    var result = await mediator.Send(new GetEmporiumUserDetailsQuery(new EmporiumId(guildId), ReferenceNumber.Create(userId)), cts);
+                    var result = await mediator.Send(new GetEmporiumUserDetailsQuery(new EmporiumId(guildId), ReferenceNumber.Create(userId)) { Cache = false }, cts);
 
                     if (result.Data == null)
                     {

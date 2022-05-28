@@ -35,7 +35,7 @@ namespace Agora.Discord.Commands
                 var time = serverTime is null ? Time.From(DateTimeOffset.UtcNow.TimeOfDay) : Time.From(serverTime);
                 var emporium = await ExecuteAsync(new CreateEmporiumCommand(EmporiumId) { LocalTime = time });
                 var currency = await ExecuteAsync(new CreateCurrencyCommand(EmporiumId, symbol, decimalPlaces));
-                
+
                 settings = await ExecuteAsync(new CreateGuildSettingsCommand(Context.GuildId, currency, resultLog.Id)
                 {
                     AuditLogChannelId = auditLog?.Id ?? 0ul,
@@ -45,6 +45,8 @@ namespace Agora.Discord.Commands
                 await SettingsService.AddGuildSettingsAsync(settings);
                 await Cache.AddEmporiumAsync(emporium);
             });
+
+            await ExecuteAsync(new CreateEmporiumUserCommand(EmporiumId, ReferenceNumber.Create(Context.Author.Id)));
 
             var settingsContext = new GuildSettingsContext(Context.Guild, settings, Context.Services.CreateScope().ServiceProvider);
             var options = new List<GuildSettingsOption>() { };

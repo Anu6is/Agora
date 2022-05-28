@@ -10,9 +10,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emporia.Migrations", "..\..\Ophios\Repos\Emporia\Emporia.Migrations\Emporia.Migrations.csproj", "{EA209432-1BA6-4459-9D83-82B9698C6FC8}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agora.Shared", "Agora.Shared\Agora.Shared.csproj", "{1CE2E4D6-C758-4F3E-986A-FAEC8DEE181D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emporia.Extensions.Discord", "..\..\Ophios\Repos\Emporia.Extensions.Discord\src\Emporia.Extensions.Discord.csproj", "{BF40972D-6780-4C22-B950-2671F95AA394}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emporia.Migrations", "..\..\Ophios\Repos\Emporia\Emporia.Migrations\Emporia.Migrations.csproj", "{8B37FED9-22DB-4BAD-91BA-842F155CF864}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,14 +26,18 @@ Global
 		{4D221356-B861-445C-B839-D41E86819AA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D221356-B861-445C-B839-D41E86819AA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D221356-B861-445C-B839-D41E86819AA7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EA209432-1BA6-4459-9D83-82B9698C6FC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EA209432-1BA6-4459-9D83-82B9698C6FC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EA209432-1BA6-4459-9D83-82B9698C6FC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EA209432-1BA6-4459-9D83-82B9698C6FC8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1CE2E4D6-C758-4F3E-986A-FAEC8DEE181D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1CE2E4D6-C758-4F3E-986A-FAEC8DEE181D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CE2E4D6-C758-4F3E-986A-FAEC8DEE181D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CE2E4D6-C758-4F3E-986A-FAEC8DEE181D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF40972D-6780-4C22-B950-2671F95AA394}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF40972D-6780-4C22-B950-2671F95AA394}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF40972D-6780-4C22-B950-2671F95AA394}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF40972D-6780-4C22-B950-2671F95AA394}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B37FED9-22DB-4BAD-91BA-842F155CF864}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B37FED9-22DB-4BAD-91BA-842F155CF864}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B37FED9-22DB-4BAD-91BA-842F155CF864}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B37FED9-22DB-4BAD-91BA-842F155CF864}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -20,5 +20,16 @@ namespace Agora.Discord.Commands
 
             return Reply("Bid Submitted!");
         }
+
+        //[Command("Pay")]
+        //[RequireBarterChannel]
+        //public async Task<DiscordCommandResult> SubmitPayment()
+        //{
+        //    var room = (Context.Channel as IThreadChannel);
+
+        //    await ExecuteAsync(new SubmitPaymentCommand(EmporiumId, new ShowroomId(room.ChannelId.RawValue), ReferenceNumber.Create(room.Id.RawValue)));
+
+        //    return Reply("Payment Submitted!");
+        //}
     }
 }

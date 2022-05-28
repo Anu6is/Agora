@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.3">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.3">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Ophios\Repos\Emporia.Extensions.Discord\src\Emporia.Extensions.Discord.csproj" />
     <ProjectReference Include="..\..\..\Ophios\Repos\Emporia\Emporia.Migrations\Emporia.Migrations.csproj" />
     <ProjectReference Include="..\..\Agora.Addons.Disqord\Agora.Addons.Disqord\Agora.Addons.Disqord.csproj" />
     <ProjectReference Include="..\Agora.Shared\Agora.Shared.csproj" />
@@ -37,10 +36,6 @@
 	<None Update="appsettings.Development.json">
 		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
-</ItemGroup>
-
-<ItemGroup>
-  <Folder Include="Services\Standard\" />
 </ItemGroup>
 
 </Project>
