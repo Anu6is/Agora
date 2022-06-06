@@ -1,8 +1,6 @@
 ﻿using Agora.Shared.Services;
-using Emporia.Application.Common;
 using Emporia.Application.Features.Commands;
 using Emporia.Application.Features.Queries;
-using Emporia.Application.Specifications;
 using Emporia.Domain.Common;
 using Emporia.Domain.Entities;
 using Emporia.Extensions.Discord;
@@ -39,12 +37,12 @@ namespace Agora.Shared.Cache
 
         public async ValueTask AddEmporiumAsync(Emporium emporium)
             => await _emporiumCache.SetAsync($"emporium:{emporium.Id.Value}",
-                                             new EmporiumDetailsResponse() 
+                                             new CachedEmporium() 
                                              { 
                                                  EmporiumId = emporium.Id.Value, 
-                                                 Categories = emporium.Categories, 
-                                                 Currencies = emporium.Currencies, 
-                                                 Showrooms = emporium.Showrooms,
+                                                 Categories = emporium.Categories.ToList(), 
+                                                 Currencies = emporium.Currencies.ToList(), 
+                                                 Showrooms = emporium.Showrooms.ToList(),
                                                  TimeOffset = emporium.TimeOffset
                                              },
                                              TimeSpan.FromMinutes(LongCacheExpirationInMinutes));
@@ -52,10 +50,10 @@ namespace Agora.Shared.Cache
         public async ValueTask RemoveEmporiumAsync(ulong guildId)
             => await _emporiumCache.RemoveAsync($"emporium:{guildId}");
         
-        public EmporiumDetailsResponse GetCachedEmporium(ulong guildId)
-            => _emporiumCache.GetOrDefault<EmporiumDetailsResponse>($"emporium:{guildId}");
+        public CachedEmporium GetCachedEmporium(ulong guildId)
+            => _emporiumCache.GetOrDefault<CachedEmporium>($"emporium:{guildId}");
 
-        public async ValueTask<EmporiumDetailsResponse> GetEmporiumAsync(ulong guildId)
+        public async ValueTask<CachedEmporium> GetEmporiumAsync(ulong guildId)
         {
             if (!Tokens.ContainsKey(guildId))
                 Tokens.TryAdd(guildId, new CancellationTokenSource());
@@ -68,7 +66,14 @@ namespace Agora.Shared.Cache
                                var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();                               
                                var result = await mediator.Send(new GetEmporiumDetailsQuery(new EmporiumId(guildId)) { Cache = true }, cts);
 
-                               return result.Data;
+                               return new CachedEmporium()
+                               {
+                                   EmporiumId = result.Data.EmporiumId,
+                                   Categories = result.Data.Categories.ToList(),
+                                   Currencies = result.Data.Currencies.ToList(),
+                                   Showrooms = result.Data.Showrooms.ToList(),
+                                   TimeOffset = result.Data.TimeOffset
+                               };
                            },
                            TimeSpan.FromMinutes(LongCacheExpirationInMinutes),
                            Tokens[guildId].Token);
@@ -77,7 +82,7 @@ namespace Agora.Shared.Cache
         public ValueTask RemoveUserAsync(ulong guildId, ulong userId)
             => _emporiumCache.RemoveAsync($"user:{guildId}:{userId}");
 
-        public ValueTask<EmporiumUserDetailsResponse> GetUserAsync(ulong guildId, ulong userId)
+        public ValueTask<CachedEmporiumUser> GetUserAsync(ulong guildId, ulong userId)
         {
             if (!Tokens.ContainsKey(guildId))
                 Tokens.TryAdd(guildId, new CancellationTokenSource());            
@@ -94,7 +99,7 @@ namespace Agora.Shared.Cache
                     if (result.Data == null)
                     {
                         var newUser = await mediator.Send(new CreateEmporiumUserCommand(new EmporiumId(guildId), ReferenceNumber.Create(userId)), cts);
-                        var userDetails = new EmporiumUserDetailsResponse() 
+                        var userDetails = new CachedEmporiumUser() 
                         { 
                             UserId = newUser.Id.Value, 
                             EmporiumId = newUser.EmporiumId.Value,
@@ -103,52 +108,16 @@ namespace Agora.Shared.Cache
                         
                         return userDetails;
                     }
-                    
-                    return result.Data;
+
+                    return new CachedEmporiumUser()
+                    {
+                        UserId = result.Data.UserId,
+                        EmporiumId = result.Data.EmporiumId,
+                        ReferenceNumber = result.Data.ReferenceNumber
+                    };
                 },
                 TimeSpan.FromMinutes(ShortCacheExpirtionInMinutes), 
                 Tokens[guildId].Token);
-        }
-
-        public ValueTask RemoveShowroomAsync(ulong channelId, string itemType)
-            => _emporiumCache.RemoveAsync($"showroom:{channelId}:{itemType}");
-
-        public async ValueTask<ShowroomDetailsResponse> GetShowroomAsync(ulong guildId, ulong channelId, ListingType itemType)
-        {
-            if (!Tokens.ContainsKey(guildId))
-                Tokens.TryAdd(guildId, new CancellationTokenSource());
-            
-            return await _emporiumCache.GetOrSetAsync(
-                $"showroom:{channelId}:{itemType}",
-                async cts =>
-                {
-                    using var scope = _serviceProvider.CreateScope();
-                    var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-                    var result = await mediator.Send(new GetShowroomDetailsQuery(new EmporiumId(guildId), new ShowroomId(channelId), itemType), cts);
-
-                    return result.Data;
-                },
-                TimeSpan.FromMinutes(ShortCacheExpirtionInMinutes), 
-                Tokens[guildId].Token);
-        }
-
-        public async ValueTask<PagedResponse<ShowroomDetailsResponse>> GetShowroomsAsync(ulong guildId, int pageNumber = 1)
-        {
-            if (!Tokens.ContainsKey(guildId))
-                Tokens.TryAdd(guildId, new CancellationTokenSource());
-            
-            return await _emporiumCache.GetOrSetAsync(
-                           $"showrooms:{guildId}-{pageNumber}",
-                           async cts =>
-                           {
-                               using var scope = _serviceProvider.CreateScope();
-                               var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-                               var filter = new ShowroomFilter(new EmporiumId(guildId)) { IsPagingEnabled = true, PageNumber = pageNumber };
-                               var result = await mediator.Send(new GetPagedShowroomQuery(filter) { Cache = true }, cts);
-                               return result;
-                           },
-                           TimeSpan.FromMinutes(ShortCacheExpirtionInMinutes),
-                           Tokens[guildId].Token);
         }
     }
 }
