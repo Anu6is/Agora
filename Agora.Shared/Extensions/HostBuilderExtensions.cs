@@ -46,9 +46,9 @@ namespace Agora.Shared.Extensions
         {
             var serviceInterfaces = type.GetServiceInterfaces().ToImmutableArray();
             var scope = type.GetCustomAttribute<AgoraServiceAttribute>()?.Scope ?? ServiceLifetime.Singleton;
-                
+
             services.SetLifetime(scope, type);
-            
+
             foreach (var serviceType in serviceInterfaces)
                 services.SetLifetime(scope, type, serviceType);
         }

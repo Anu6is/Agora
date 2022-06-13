@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
-using Sentry;
 using Sentry.Extensions.Logging;
 using Serilog;
 
@@ -25,7 +24,7 @@ namespace Agora.Shared.Extensions
         public static ILoggingBuilder AddSentry(this ILoggingBuilder builder, HostBuilderContext context)
         {
             builder.Services.Configure<SentryLoggingOptions>(context.Configuration.GetSection("Sentry"));
-            builder.AddSentry();            
+            builder.AddSentry();
             return builder;
         }
     }
