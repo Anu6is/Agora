@@ -1,5 +1,8 @@
 ﻿using Agora.Shared.Attributes;
 using Agora.Shared.Services;
+using Believe.Net;
+using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Collections.Immutable;
@@ -12,7 +15,7 @@ namespace Agora.Shared.Extensions
     {
         public static IHostBuilder ConfigureCustomAgoraServices(this IHostBuilder builder)
         {
-            return builder.ConfigureServices((context, services) => services.ConfigureAgora().WithAgoraSharedServices());
+            return builder.ConfigureServices((context, services) => services.ConfigureAgora().WithAgoraSharedServices().AddEconomyServices(context.Configuration));
         }
 
         public static IServiceCollection ConfigureAgora(this IServiceCollection services)
@@ -51,6 +54,18 @@ namespace Agora.Shared.Extensions
 
             foreach (var serviceType in serviceInterfaces)
                 services.SetLifetime(scope, type, serviceType);
+        }
+
+        public static IServiceCollection AddEconomyServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            var unbelievaClientConfig = new UnbelievaClientConfig() { Token = configuration["Token:UnbelievaBoat"] };
+
+            services.AddSingleton(unbelievaClientConfig);
+            services.AddSingleton<UnbelievaClient>();
+
+            services.AddMediatR(x => x.AsScoped(), Assembly.GetExecutingAssembly());
+
+            return services;
         }
 
         private static IServiceCollection SetLifetime(this IServiceCollection services, ServiceLifetime scope, Type serviceType) => scope switch

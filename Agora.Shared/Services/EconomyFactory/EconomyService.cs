@@ -11,12 +11,12 @@ namespace Agora.Shared.Services.EconomyFactory
 
         public virtual ValueTask<Money> GetBalanceAsync(IEmporiumUser user, Currency currency) => throw new NotImplementedException("Economy is not enabled.");
 
-        public virtual ValueTask SetBalanceAsync(IEmporiumUser user, Money amount) => throw new NotImplementedException("Economy is not enabled.");
+        public virtual ValueTask SetBalanceAsync(IEmporiumUser user, Money amount, string reason = "") => throw new NotImplementedException("Economy is not enabled.");
 
-        public virtual ValueTask DeleteBalanceAsync(IEmporiumUser user, Currency currency) => throw new NotImplementedException("Economy is not enabled.");
+        public virtual ValueTask DeleteBalanceAsync(IEmporiumUser user, Currency currency, string reason = "") => throw new NotImplementedException("Economy is not enabled.");
 
-        public virtual ValueTask<Money> IncreaseBalanceAsync(IEmporiumUser user, Money amount) => throw new NotImplementedException("Economy is not enabled.");
+        public virtual ValueTask<Money> IncreaseBalanceAsync(IEmporiumUser user, Money amount, string reason = "") => throw new NotImplementedException("Economy is not enabled.");
 
-        public virtual ValueTask<Money> DecreaseBalanceAsync(IEmporiumUser user, Money amount) => throw new NotImplementedException("Economy is not enabled.");
+        public virtual ValueTask<Money> DecreaseBalanceAsync(IEmporiumUser user, Money amount, string reason = "") => throw new NotImplementedException("Economy is not enabled.");
     }
 }

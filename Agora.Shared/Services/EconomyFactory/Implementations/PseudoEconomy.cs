@@ -9,8 +9,8 @@ namespace Agora.Shared.Services.EconomyFactory
 
         public override ValueTask<Money> GetBalanceAsync(IEmporiumUser user, Currency currency) => ValueTask.FromResult(Money.Create(decimal.MaxValue, currency));
 
-        public override ValueTask<Money> IncreaseBalanceAsync(IEmporiumUser user, Money amount) => ValueTask.FromResult(Money.Create(decimal.MaxValue, amount.Currency));
+        public override ValueTask<Money> IncreaseBalanceAsync(IEmporiumUser user, Money amount, string reason = "") => ValueTask.FromResult(Money.Create(decimal.MaxValue, amount.Currency));
 
-        public override ValueTask<Money> DecreaseBalanceAsync(IEmporiumUser user, Money amount) => ValueTask.FromResult(Money.Create(decimal.MaxValue, amount.Currency));
+        public override ValueTask<Money> DecreaseBalanceAsync(IEmporiumUser user, Money amount, string reason = "") => ValueTask.FromResult(Money.Create(decimal.MaxValue, amount.Currency));
     }
 }
