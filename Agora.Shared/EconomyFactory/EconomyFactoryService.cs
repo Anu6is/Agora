@@ -1,8 +1,9 @@
 ﻿using Agora.Shared.Attributes;
+using Agora.Shared.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Agora.Shared.Services.EconomyFactory
+namespace Agora.Shared.EconomyFactory
 {
     public enum EconomyType { Disabled, AuctionBot, UnbelievaBoat }
 

@@ -1,4 +1,4 @@
-﻿using Agora.Shared.Services.EconomyFactory;
+﻿using Agora.Shared.EconomyFactory;
 using Emporia.Domain.Entities;
 using Emporia.Domain.Events;
 using Emporia.Extensions.Discord;

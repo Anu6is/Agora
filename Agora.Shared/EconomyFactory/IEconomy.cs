@@ -1,6 +1,6 @@
 ﻿using Emporia.Domain.Common;
 
-namespace Agora.Shared.Services.EconomyFactory
+namespace Agora.Shared.EconomyFactory
 {
     public interface IEconomy
     {

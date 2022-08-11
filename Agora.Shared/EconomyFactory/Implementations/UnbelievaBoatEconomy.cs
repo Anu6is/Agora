@@ -3,7 +3,7 @@ using Emporia.Domain.Common;
 using Humanizer;
 using Microsoft.Extensions.Logging;
 
-namespace Agora.Shared.Services.EconomyFactory
+namespace Agora.Shared.EconomyFactory
 {
     public class UnbelievaBoatEconomy : EconomyService
     {

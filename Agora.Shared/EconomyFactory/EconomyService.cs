@@ -1,8 +1,9 @@
 ﻿using Agora.Shared.Attributes;
+using Agora.Shared.Services;
 using Emporia.Domain.Common;
 using Microsoft.Extensions.Logging;
 
-namespace Agora.Shared.Services.EconomyFactory
+namespace Agora.Shared.EconomyFactory
 {
     [AgoraService(AgoraServiceAttribute.ServiceLifetime.Transient)]
     public class EconomyService : AgoraService, IEconomy

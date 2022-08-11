@@ -1,11 +1,9 @@
-﻿using Agora.Shared.Services.EconomyFactory;
+﻿using Agora.Shared.EconomyFactory;
 using Emporia.Domain.Common;
 using Emporia.Domain.Entities;
 using Emporia.Domain.Events;
 using Emporia.Extensions.Discord;
 using MediatR;
-using System;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace Agora.Shared.Events
