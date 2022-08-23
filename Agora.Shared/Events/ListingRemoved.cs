@@ -23,7 +23,7 @@ namespace Agora.Shared.Events
         {
             if (notification.ProductListing.Status != ListingStatus.Sold) return;
             if (notification.ProductListing.Product is not AuctionItem and not MarketItem) return;
-            
+
             var guildSettings = await _guildSettingsService.GetGuildSettingsAsync(notification.ProductListing.Owner.EmporiumId.Value);
 
             if (guildSettings.EconomyType == "Disabled") return;

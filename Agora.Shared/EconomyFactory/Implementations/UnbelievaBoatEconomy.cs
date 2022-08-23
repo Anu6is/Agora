@@ -20,7 +20,7 @@ namespace Agora.Shared.EconomyFactory
 
             if (userBalance.IsRateLimited) throw new RateLimitException($"UnbelievaBoat transaction processing is on cooldown. Retry after {userBalance.RetryAfter.Humanize()}");
 
-            return Money.Create((decimal)userBalance.Total, currency); 
+            return Money.Create((decimal)userBalance.Total, currency);
         }
 
         public override async ValueTask SetBalanceAsync(IEmporiumUser user, Money amount, string reason = "")

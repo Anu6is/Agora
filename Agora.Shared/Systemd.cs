@@ -24,16 +24,16 @@ namespace Agora.Shared
         [StructLayout(LayoutKind.Sequential)]
         public class Unit
         {
-            private string _unitName;
-            private string _description;
-            private string _loadState;
-            private string _activeState;
-            private string _subState;
-            private string _followUnit;
-            private ObjectPath _unitObjectPath;
-            private uint _jobId;
-            private string _jobType;
-            private ObjectPath _jobObjectPath;
+            private readonly string _unitName;
+            private readonly string _description;
+            private readonly string _loadState;
+            private readonly string _activeState;
+            private readonly string _subState;
+            private readonly string _followUnit;
+            private readonly ObjectPath _unitObjectPath;
+            private readonly uint _jobId;
+            private readonly string _jobType;
+            private readonly ObjectPath _jobObjectPath;
 
             public string Name => _unitName;
             public ObjectPath Path => _unitObjectPath;
