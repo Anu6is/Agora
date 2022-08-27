@@ -15,7 +15,8 @@ namespace Agora.Shared.Extensions
     {
         public static IHostBuilder ConfigureCustomAgoraServices(this IHostBuilder builder)
         {
-            return builder.ConfigureServices((context, services) => services.ConfigureAgora().WithAgoraSharedServices().AddEconomyServices(context.Configuration));
+            return builder.ConfigureServices((context, services)
+                => services.ConfigureAgora().WithAgoraSharedServices(context.Configuration).AddEconomyServices(context.Configuration));
         }
 
         public static IServiceCollection ConfigureAgora(this IServiceCollection services)
@@ -30,15 +31,25 @@ namespace Agora.Shared.Extensions
 
         public static IHostBuilder AddAgoraSharedServices(this IHostBuilder builder)
         {
-            return builder.ConfigureServices((context, services) => services.WithAgoraSharedServices());
+            return builder.ConfigureServices((context, services) => services.WithAgoraSharedServices(context.Configuration));
         }
 
-        public static IServiceCollection WithAgoraSharedServices(this IServiceCollection services)
+        public static IServiceCollection WithAgoraSharedServices(this IServiceCollection services, IConfiguration configuration)
         {
             var types = Assembly.GetExecutingAssembly().GetTypes().Where(type => type.IsAssignableTo(typeof(AgoraService)) && !type.IsAbstract).ToImmutableArray();
 
             foreach (Type type in types)
                 services.AddAgoraService(type);
+
+            var externalAssemblies = configuration.GetSection("Addons").GetChildren().Select(x => x.Value + ".dll").ToArray();
+
+            foreach (var extAssembly in externalAssemblies)
+            {
+                types = Assembly.LoadFrom(extAssembly).GetTypes().Where(t => t.IsAssignableTo(typeof(AgoraService)) && !t.IsAbstract).ToImmutableArray();
+
+                foreach (Type type in types)
+                    services.AddAgoraService(type);
+            }
 
             services.AddFusionCache();
 
