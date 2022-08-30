@@ -25,4 +25,10 @@
     <ProjectReference Include="..\..\..\Ophios\Repos\Emporia.Extensions.Discord\src\Emporia.Extensions.Discord.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="agora.service">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
