@@ -1,9 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Agora.Shared.Services;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using Sentry.Extensions.Logging;
 using Serilog;
+using Serilog.Events;
 
 namespace Agora.Shared.Extensions
 {
@@ -17,7 +20,16 @@ namespace Agora.Shared.Extensions
 
         public static ILoggingBuilder WithSerilog(this ILoggingBuilder builder, HostBuilderContext context)
         {
-            builder.AddSerilog(new LoggerConfiguration().ReadFrom.Configuration(context.Configuration).CreateLogger(), dispose: false);
+            var switcher = new LoggingLevelSwitcher(context.Configuration);
+            
+            builder.Services.AddSingleton<ILoggingLevelSwitcher>(switcher);
+            switcher.SetMinimumLevelFromConfiguration();
+
+            builder.AddSerilog(
+                new LoggerConfiguration()
+                    .ReadFrom.Configuration(context.Configuration)
+                    .MinimumLevel.ControlledBy(switcher.LevelSwitch).CreateLogger(), 
+                dispose: false);
             return builder;
         }
 
@@ -26,6 +38,11 @@ namespace Agora.Shared.Extensions
             builder.Services.Configure<SentryLoggingOptions>(context.Configuration.GetSection("Sentry"));
             builder.AddSentry();
             return builder;
+        }
+
+        public static LogEventLevel GetDefaultLogLevel(this IConfiguration configuration)
+        {
+            return configuration.GetValue<LogEventLevel>("Serilog:MinimumLevel:Default");
         }
     }
 }
