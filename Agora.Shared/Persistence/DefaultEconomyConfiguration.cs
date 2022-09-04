@@ -16,8 +16,7 @@ namespace Agora.Shared.Persistence
             builder.Property(economy => economy.Balance);
             builder.Property(economy => economy.EmporiumId);
             builder.HasIndex(economy => economy.UserReference);
-            builder.HasOne<Emporium>().WithOne()
-                   .HasForeignKey<DefaultEconomyUser>(economy => economy.EmporiumId)
+            builder.HasOne<Emporium>().WithMany().HasForeignKey(x => x.EmporiumId)
                    .OnDelete(DeleteBehavior.Cascade);
         }
     }
