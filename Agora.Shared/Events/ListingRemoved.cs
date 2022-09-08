@@ -55,7 +55,8 @@ namespace Agora.Shared.Events
         {
             if (notification.ProductListing.Product is not AuctionItem item) return;
 
-            var guildSettings = await _guildSettingsService.GetGuildSettingsAsync(notification.ProductListing.Owner.EmporiumId.Value);
+            var emporiumId = notification.ProductListing.Owner.EmporiumId.Value;
+            var guildSettings = await _guildSettingsService.GetGuildSettingsAsync(emporiumId);
 
             if (guildSettings.EconomyType == "Disabled") return;
 
@@ -71,14 +72,18 @@ namespace Agora.Shared.Events
                     {
                         foreach (var bid in item.Offers)
                         {
-                            await economy.IncreaseBalanceAsync(bid.User, bid.Amount, $"Bid returned for {item.Quantity} {item.Title}");
+                            var user = EmporiumUser.Create(new EmporiumId(emporiumId), bid.UserId, bid.UserReference);
+
+                            await economy.IncreaseBalanceAsync(user, bid.Amount, $"Bid returned for {item.Quantity} {item.Title}");
                             await Task.Delay(200, cancellationToken);
                         }
                     }
                     else
                     {
                         var bid = item.Offers.OrderBy(x => x.SubmittedOn).Last();
-                        await economy.IncreaseBalanceAsync(bid.User, bid.Amount, $"Bid returned for {item.Quantity} {item.Title}");
+                        var user = EmporiumUser.Create(new EmporiumId(emporiumId), bid.UserId, bid.UserReference);
+
+                        await economy.IncreaseBalanceAsync(user, bid.Amount, $"Bid returned for {item.Quantity} {item.Title}");
                     }
                     break;
                 case ListingStatus.Sold:
@@ -90,11 +95,16 @@ namespace Agora.Shared.Events
 
                     foreach (var bid in orderedOffers.Skip(1))
                     {
-                        await economy.IncreaseBalanceAsync(bid.User, bid.Amount, $"Bid returned for {item.Quantity} {item.Title}");
+                        var user = EmporiumUser.Create(new EmporiumId(emporiumId), bid.UserId, bid.UserReference);
+
+                        await economy.IncreaseBalanceAsync(user, bid.Amount, $"Bid returned for {item.Quantity} {item.Title}");
                         await Task.Delay(200, cancellationToken);
                     }
 
-                    await economy.IncreaseBalanceAsync(orderedOffers[0].User, refund, $"Partial bid refund for {item.Quantity} {item.Title}");
+                    var winningBid = orderedOffers[0];
+                    var winner = EmporiumUser.Create(new EmporiumId(emporiumId), winningBid.UserId, winningBid.UserReference);
+
+                    await economy.IncreaseBalanceAsync(winner, refund, $"Partial bid refund for {item.Quantity} {item.Title}");
 
                     break;
                 default:
