@@ -93,12 +93,12 @@ namespace Agora.Shared.Cache
         public ValueTask RemoveUserAsync(ulong guildId, ulong userId)
             => _emporiumCache.RemoveAsync($"user:{guildId}:{userId}");
 
-        public ValueTask<CachedEmporiumUser> GetUserAsync(ulong guildId, ulong userId)
+        public async ValueTask<CachedEmporiumUser> GetUserAsync(ulong guildId, ulong userId)
         {
             if (!Tokens.ContainsKey(guildId))
                 Tokens.TryAdd(guildId, new CancellationTokenSource());
 
-            return _emporiumCache.GetOrSetAsync(
+            return await _emporiumCache.GetOrSetAsync(
                 $"user:{guildId}:{userId}",
                 async cts =>
                 {
@@ -128,6 +128,21 @@ namespace Agora.Shared.Cache
                     };
                 },
                 TimeSpan.FromMinutes(ShortCacheExpirtionInMinutes),
+                Tokens[guildId].Token);
+        }
+
+        public ValueTask RemoveProductAsync(ulong guildId, ulong productReference)
+            => _emporiumCache.RemoveAsync($"product:{guildId}:{productReference}");
+
+        public  async ValueTask<CachedEmporiumProduct> GetProductAsync(ulong guildId, ulong showroomId, ulong productReference)
+        {
+            if (!Tokens.ContainsKey(guildId))
+                Tokens.TryAdd(guildId, new CancellationTokenSource());
+
+            return await _emporiumCache.GetOrSetAsync(
+                $"product:{guildId}:{productReference}",
+                async cts => await _serviceProvider.GetRequiredService<IProductService>().GetProductAsync(showroomId, productReference),
+                TimeSpan.FromMinutes(ShortCacheExpirtionInMinutes), 
                 Tokens[guildId].Token);
         }
     }
