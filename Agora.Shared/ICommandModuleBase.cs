@@ -20,12 +20,12 @@ namespace Agora.Shared
         public EmporiumId EmporiumId { get; }
         public ShowroomId ShowroomId { get; }
 
-        public async Task<TResult> ExecuteAsync<TResult>(Command<TResult> command)
+        public async Task<TResult> ExecuteAsync<TResult>(IRequest<TResult> command)
         {
             return await Mediator.Send(command);
         }
 
-        public async Task<Unit> ExecuteAsync(Command command)
+        public async Task<Unit> ExecuteAsync(IRequest command)
         {
             return await Mediator.Send(command);
         }

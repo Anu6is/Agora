@@ -74,6 +74,7 @@ namespace Agora.Shared.Extensions
             services.AddSingleton(unbelievaClientConfig);
             services.AddSingleton<UnbelievaClient>();
 
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddMediatR(x => x.AsScoped(), Assembly.GetExecutingAssembly());
 
             return services;
