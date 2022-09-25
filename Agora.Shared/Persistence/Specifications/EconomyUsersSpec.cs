@@ -1,4 +1,4 @@
-﻿using Agora.Shared.EconomyFactory.Models;
+﻿using Agora.Shared.Persistence.Models;
 using Ardalis.Specification;
 using Emporia.Domain.Common;
 

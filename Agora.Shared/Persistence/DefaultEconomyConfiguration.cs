@@ -1,4 +1,4 @@
-﻿using Agora.Shared.EconomyFactory.Models;
+﻿using Agora.Shared.Persistence.Models;
 using Emporia.Domain.Entities;
 using Emporia.Persistence.Configuration;
 using Microsoft.EntityFrameworkCore;

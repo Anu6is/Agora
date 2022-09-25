@@ -1,6 +1,6 @@
 ﻿using Emporia.Domain.Common;
 
-namespace Agora.Shared.EconomyFactory.Models
+namespace Agora.Shared.Persistence.Models
 {
     public class DefaultEconomyUser : Entity
     {

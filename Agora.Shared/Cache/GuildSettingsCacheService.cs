@@ -4,6 +4,7 @@ using Emporia.Extensions.Discord.Features.Queries;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
 using ZiggyCreatures.Caching.Fusion;
 
 namespace Agora.Shared.Cache
@@ -13,32 +14,53 @@ namespace Agora.Shared.Cache
         private const int CacheExpirationInMinutes = 15;
 
         private readonly IFusionCache _settingsCache;
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IServiceScopeFactory _scopeFactory;
 
-        public GuildSettingsCacheService(IFusionCache cache, ILogger<IGuildSettingsService> logger, IServiceProvider services) : base(logger)
+        private readonly ConcurrentDictionary<ulong, CancellationTokenSource> Tokens;
+
+        public GuildSettingsCacheService(IFusionCache cache, ILogger<IGuildSettingsService> logger, IServiceScopeFactory factory) : base(logger)
         {
+            Tokens = new();
             _settingsCache = cache;
-            _serviceProvider = services;
+            _scopeFactory = factory;
         }
 
-        public void Clear(ulong guildId) => _settingsCache.Remove($"settings:{guildId}");
+        public void Clear(ulong guildId)
+        {
+            _settingsCache.Remove($"settings:{guildId}");
+
+            if (Tokens.TryRemove(guildId, out var source))
+                source.Cancel();
+        }
 
         public async ValueTask AddGuildSettingsAsync(IDiscordGuildSettings settings)
-            => await _settingsCache.SetAsync($"settings:{settings.GuildId}", settings, TimeSpan.FromMinutes(CacheExpirationInMinutes));
+        {
+            if (!Tokens.ContainsKey(settings.GuildId))
+                Tokens.TryAdd(settings.GuildId, new CancellationTokenSource());
+
+            await _settingsCache.SetAsync($"settings:{settings.GuildId}",
+                                          settings,
+                                          TimeSpan.FromMinutes(CacheExpirationInMinutes),
+                                          Tokens[settings.GuildId].Token);
+        }
 
         public async ValueTask<IDiscordGuildSettings> GetGuildSettingsAsync(ulong guildId)
         {
+            if (!Tokens.ContainsKey(guildId))
+                Tokens.TryAdd(guildId, new CancellationTokenSource());
+
             return await _settingsCache.GetOrSetAsync<IDiscordGuildSettings>(
                            $"settings:{guildId}",
                            async cts =>
                            {
-                               using var scope = _serviceProvider.CreateScope();
+                               using var scope = _scopeFactory.CreateScope();
                                var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
                                var result = await mediator.Send(new GetGuildSettingsDetailsQuery(guildId), cts);
 
                                return result.Data;
                            },
-                           TimeSpan.FromMinutes(CacheExpirationInMinutes));
+                           TimeSpan.FromMinutes(CacheExpirationInMinutes),
+                           Tokens[guildId].Token);
         }
     }
 }

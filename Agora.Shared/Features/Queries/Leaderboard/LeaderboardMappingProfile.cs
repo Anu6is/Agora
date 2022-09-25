@@ -1,4 +1,4 @@
-﻿using Agora.Shared.EconomyFactory.Models;
+﻿using Agora.Shared.Persistence.Models;
 using AutoMapper;
 
 namespace Agora.Shared.Features.Queries

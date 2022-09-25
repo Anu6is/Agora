@@ -1,8 +1,11 @@
 ﻿using Agora.Shared.EconomyFactory;
+using Agora.Shared.Features.Commands;
+using Agora.Shared.Persistence.Models;
 using Emporia.Domain.Entities;
 using Emporia.Domain.Events;
 using Emporia.Extensions.Discord;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Agora.Shared.Events
 {
@@ -48,6 +51,51 @@ namespace Agora.Shared.Events
             }
 
             return;
+        }
+    }
+
+    internal class OfferAddedAlert : INotificationHandler<OfferAddedEvent>
+    {
+        private readonly IUserProfileService _profileService;
+        private readonly IServiceScopeFactory _scopeFactory;
+
+        public OfferAddedAlert(IUserProfileService profileService, IServiceScopeFactory scopeFactory)
+        {
+            _profileService = profileService;
+            _scopeFactory = scopeFactory;
+        }
+
+        public async Task Handle(OfferAddedEvent notification, CancellationToken cancellationToken)
+        {
+            if (notification.Listing.Product is not AuctionItem item) return;
+            if (notification.Listing is VickreyAuction) return;
+            if (item.Offers.Count == 1) return;
+
+            var previousBid = item.Offers.OrderByDescending(x => x.SubmittedOn).Skip(1).First();
+
+            if (notification.Offer.UserReference == previousBid.UserReference) return;
+
+            var emporiumId = notification.Listing.Owner.EmporiumId.Value;
+            var profile = (UserProfile) await _profileService.GetUserProfileAsync(emporiumId, previousBid.UserReference.Value);
+
+            if (!profile.OutbidAlerts) return;
+
+            try
+            {
+                using var scope = _scopeFactory.CreateScope();
+
+                var messageService = scope.ServiceProvider.GetRequiredService<IMessageService>();
+                var link = messageService.GetMessageUrl(emporiumId, notification.Listing.ShowroomId.Value, item.ReferenceNumber.Value);
+                var reference =$"*reference code:* [{notification.Listing.ReferenceCode}]({link})" ;
+
+                await messageService.SendDirectMessageAsync(profile.UserReference.Value, $"You have been outbid for **{item.Title}**\n{reference}");
+            }
+            catch (Exception)
+            {
+                using var scope = _scopeFactory.CreateScope();
+                var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                await mediator.Send(new UpdateUserProfileCommand(profile.WithOutbidNotifications(false)), cancellationToken);
+            }
         }
     }
 }
