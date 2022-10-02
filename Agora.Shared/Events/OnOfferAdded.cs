@@ -1,6 +1,8 @@
 ﻿using Agora.Shared.EconomyFactory;
+using Agora.Shared.Extensions;
 using Agora.Shared.Features.Commands;
 using Agora.Shared.Persistence.Models;
+using Emporia.Domain.Common;
 using Emporia.Domain.Entities;
 using Emporia.Domain.Events;
 using Emporia.Extensions.Discord;
@@ -84,9 +86,12 @@ namespace Agora.Shared.Events
             {
                 using var scope = _scopeFactory.CreateScope();
 
+                var channelReference = notification.Listing.ReferenceCode.Reference();
+                var channelId = channelReference == 0 ? notification.Listing.ShowroomId.Value : channelReference;
+
                 var messageService = scope.ServiceProvider.GetRequiredService<IMessageService>();
-                var link = messageService.GetMessageUrl(emporiumId, notification.Listing.ShowroomId.Value, item.ReferenceNumber.Value);
-                var reference =$"*reference code:* [{notification.Listing.ReferenceCode}]({link})" ;
+                var link = messageService.GetMessageUrl(emporiumId, channelId, item.ReferenceNumber.Value);
+                var reference = $"*reference code:* [{notification.Listing.ReferenceCode.Code()}]({link})" ;
 
                 await messageService.SendDirectMessageAsync(profile.UserReference.Value, $"You have been outbid for **{item.Title}**\n{reference}");
             }

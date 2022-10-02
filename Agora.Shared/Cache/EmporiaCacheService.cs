@@ -134,13 +134,17 @@ namespace Agora.Shared.Cache
         public ValueTask RemoveProductAsync(ulong guildId, ulong productReference)
             => _emporiumCache.RemoveAsync($"product:{guildId}:{productReference}");
 
-        public  async ValueTask<CachedEmporiumProduct> GetProductAsync(ulong guildId, ulong showroomId, ulong productReference)
+        public CachedEmporiumProduct GetCachedProduct(ulong guildId, ulong productId)
+            => _emporiumCache.GetOrDefault<CachedEmporiumProduct>($"product:{guildId}:{productId}", token: Tokens[guildId].Token);
+
+        public  async ValueTask<CachedEmporiumProduct> GetProductAsync(ulong guildId, ulong showroomId,
+                                                                       ulong productReference, bool uniqueRoom = false)
         {
             if (!Tokens.ContainsKey(guildId))
                 Tokens.TryAdd(guildId, new CancellationTokenSource());
 
             return await _emporiumCache.GetOrSetAsync(
-                $"product:{guildId}:{productReference}",
+                $"product:{guildId}:{(uniqueRoom ? showroomId : productReference)}",
                 async cts => await _serviceProvider.GetRequiredService<IProductService>().GetProductAsync(showroomId, productReference),
                 TimeSpan.FromMinutes(ShortCacheExpirtionInMinutes), 
                 Tokens[guildId].Token);
