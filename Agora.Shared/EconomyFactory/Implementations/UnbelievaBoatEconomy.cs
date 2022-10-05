@@ -1,5 +1,6 @@
 ﻿using Believe.Net;
 using Emporia.Domain.Common;
+using FluentValidation;
 using Humanizer;
 using Microsoft.Extensions.Logging;
 
@@ -18,6 +19,7 @@ namespace Agora.Shared.EconomyFactory
         {
             var userBalance = await _unbelievaClient.GetUserBalanceAsync(user.EmporiumId.Value, user.ReferenceNumber.Value);
 
+            if (userBalance == null) throw new ValidationException("Unable to verify user balance");
             if (userBalance.IsRateLimited) throw new RateLimitException($"UnbelievaBoat transaction processing is on cooldown. Retry after {userBalance.RetryAfter.Humanize()}");
 
             return Money.Create((decimal)userBalance.Total, currency);
@@ -57,6 +59,16 @@ namespace Agora.Shared.EconomyFactory
         public override async ValueTask<Money> DecreaseBalanceAsync(IEmporiumUser user, Money amount, string reason = "")
         {
             var userBalance = await _unbelievaClient.DecreaseUserCashAsync(user.EmporiumId.Value, user.ReferenceNumber.Value, amount.Value, reason);
+
+            if (userBalance == null)
+            {
+                var economyAccess = await _unbelievaClient.HasPermissionAsync(user.EmporiumId.Value, ApplicationPermission.EditEconomy);
+
+                if (!economyAccess)
+                    throw new UnauthorizedAccessException("Auction Bot needs to be authorized to use UnbelivaBoat economy in this server!");
+
+                throw new NullReferenceException("An error occurred while attempting to access the UnbelievaBoat balance");
+            }
 
             if (userBalance.IsRateLimited) throw new RateLimitException($"UnbelievaBoat transaction processing is on cooldown. Retry after {userBalance.RetryAfter.Humanize()}");
 

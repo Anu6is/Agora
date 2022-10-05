@@ -4,7 +4,6 @@ using Emporia.Domain.Entities;
 using Emporia.Domain.Events;
 using Emporia.Extensions.Discord;
 using MediatR;
-using System.Text.RegularExpressions;
 
 namespace Agora.Shared.Events
 {
@@ -30,11 +29,14 @@ namespace Agora.Shared.Events
 
             var product = notification.ProductListing.Product;
             var economy = _factory.Create(guildSettings.EconomyType);
-            var submission = Regex.Match(notification.ProductListing.CurrentOffer.Submission.Value, @"\d+\.*\d*").Value;
-            var currency = (product as AuctionItem)?.StartingPrice.Currency ?? (product as MarketItem).Price.Currency;
-            var amount = Money.Create(decimal.Parse(submission), currency);
+            var submission = product switch
+            {
+                AuctionItem auction => auction.Offers.OrderByDescending(x => x.SubmittedOn).First().Amount,
+                MarketItem market => market.Offers.OrderByDescending(x => x.SubmittedOn).First().Amount,
+                _ => throw new InvalidOperationException($"Cannot increase balances for {product.GetType()}")
+            };
 
-            await economy.IncreaseBalanceAsync(notification.ProductListing.Owner, amount, $"Sale of {notification.ProductListing.Product.Title}");
+            await economy.IncreaseBalanceAsync(notification.ProductListing.Owner, submission, $"Sale of {notification.ProductListing.Product.Title}");
 
             return;
         }
