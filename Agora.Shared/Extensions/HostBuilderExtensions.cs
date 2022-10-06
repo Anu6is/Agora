@@ -13,6 +13,21 @@ namespace Agora.Shared.Extensions
 {
     public static class HostBuilderExtensions
     {
+        public static IList<Assembly> LoadCommandAssemblies(this IConfiguration configuration)
+        {
+            var assemblies = new List<Assembly>();
+            var externalAssemblies = configuration.GetSection("Addons").GetChildren().Select(x => x.Value + ".dll").ToArray();
+
+            foreach (var assemblyName in externalAssemblies)
+            {
+                var assembly = Assembly.LoadFrom(assemblyName);
+                    
+                if (assembly.GetTypes().Any(t => t.IsAssignableTo(typeof(ICommandModuleBase)) && !t.IsAbstract)) assemblies.Add(assembly);
+            }
+
+            return assemblies;
+        }
+
         public static IHostBuilder ConfigureCustomAgoraServices(this IHostBuilder builder)
         {
             return builder.ConfigureServices((context, services)

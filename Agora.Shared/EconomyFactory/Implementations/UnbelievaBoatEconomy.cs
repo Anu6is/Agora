@@ -47,6 +47,8 @@ namespace Agora.Shared.EconomyFactory
         {
             var userBalance = await _unbelievaClient.IncreaseUserBankAsync(user.EmporiumId.Value, user.ReferenceNumber.Value, amount.Value, reason);
 
+            if (userBalance == null) await CheckEconomyAccess(user);
+
             if (userBalance.IsRateLimited)
             {
                 await Task.Delay(userBalance.RetryAfter);
@@ -60,19 +62,21 @@ namespace Agora.Shared.EconomyFactory
         {
             var userBalance = await _unbelievaClient.DecreaseUserCashAsync(user.EmporiumId.Value, user.ReferenceNumber.Value, amount.Value, reason);
 
-            if (userBalance == null)
-            {
-                var economyAccess = await _unbelievaClient.HasPermissionAsync(user.EmporiumId.Value, ApplicationPermission.EditEconomy);
-
-                if (!economyAccess)
-                    throw new UnauthorizedAccessException("Auction Bot needs to be authorized to use UnbelivaBoat economy in this server!");
-
-                throw new NullReferenceException("An error occurred while attempting to access the UnbelievaBoat balance");
-            }
+            if (userBalance == null) await CheckEconomyAccess(user);
 
             if (userBalance.IsRateLimited) throw new RateLimitException($"UnbelievaBoat transaction processing is on cooldown. Retry after {userBalance.RetryAfter.Humanize()}");
 
             return Money.Create((decimal)userBalance.Total, amount.Currency);
+        }
+
+        private async ValueTask CheckEconomyAccess(IEmporiumUser user)
+        {
+            var economyAccess = await _unbelievaClient.HasPermissionAsync(user.EmporiumId.Value, ApplicationPermission.EditEconomy);
+
+            if (!economyAccess)
+                throw new UnauthorizedAccessException("Auction Bot needs to be authorized to use UnbelivaBoat economy in this server!");
+
+            throw new NullReferenceException("An error occurred while attempting to access the UnbelievaBoat balance");
         }
     }
 }
