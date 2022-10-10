@@ -67,6 +67,7 @@ namespace Agora.Shared.Extensions
             }
 
             services.AddFusionCache();
+            services.AddHttpClient("agora");
 
             return services;
         }
