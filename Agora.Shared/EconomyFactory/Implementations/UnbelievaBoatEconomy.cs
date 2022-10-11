@@ -22,7 +22,7 @@ namespace Agora.Shared.EconomyFactory
             if (userBalance == null) throw new ValidationException("Unable to verify user balance");
             if (userBalance.IsRateLimited) throw new RateLimitException($"UnbelievaBoat transaction processing is on cooldown. Retry after {userBalance.RetryAfter.Humanize()}");
 
-            return Money.Create((decimal)userBalance.Total, currency);
+            return Money.Create(ParseToDecimal(userBalance.Total), currency);
         }
 
         public override async ValueTask SetBalanceAsync(IEmporiumUser user, Money amount, string reason = "")
@@ -55,7 +55,7 @@ namespace Agora.Shared.EconomyFactory
                 await IncreaseBalanceAsync(user, amount, reason);
             }
 
-            return Money.Create((decimal)userBalance.Total, amount.Currency);
+            return Money.Create(ParseToDecimal(userBalance.Total), amount.Currency);
         }
 
         public override async ValueTask<Money> DecreaseBalanceAsync(IEmporiumUser user, Money amount, string reason = "")
@@ -66,7 +66,7 @@ namespace Agora.Shared.EconomyFactory
 
             if (userBalance.IsRateLimited) throw new RateLimitException($"UnbelievaBoat transaction processing is on cooldown. Retry after {userBalance.RetryAfter.Humanize()}");
 
-            return Money.Create((decimal)userBalance.Total, amount.Currency);
+            return Money.Create(ParseToDecimal(userBalance.Total), amount.Currency);
         }
 
         private async ValueTask CheckEconomyAccess(IEmporiumUser user)
@@ -77,6 +77,24 @@ namespace Agora.Shared.EconomyFactory
                 throw new UnauthorizedAccessException("Auction Bot needs to be authorized to use UnbelivaBoat economy in this server!");
 
             throw new NullReferenceException("An error occurred while attempting to access the UnbelievaBoat balance");
+        }
+
+        private static decimal ParseToDecimal(double value)
+        {
+            if (double.IsInfinity(value)) return decimal.MaxValue;
+            if (double.IsNaN(value)) return decimal.MinValue;
+
+            try
+            {
+                return Convert.ToDecimal(value);
+            }
+            catch (Exception)
+            {
+                if (value > 0)
+                    return decimal.MaxValue;
+                else
+                    return decimal.MinValue;
+            }
         }
     }
 }
