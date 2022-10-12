@@ -1,15 +1,9 @@
 ﻿using Agora.Shared.Features.Commands;
 using Agora.Shared.Features.Queries;
 using Agora.Shared.Persistence.Models;
-using Agora.Shared.Persistence.Specifications;
 using Agora.Shared.Services;
-using AutoMapper;
-using Emporia.Application.Common;
-using Emporia.Application.Features.Commands;
 using Emporia.Domain.Common;
 using Emporia.Extensions.Discord;
-using Emporia.Extensions.Discord.Features.Queries;
-using Emporia.Persistence.DataAccess;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -71,7 +65,9 @@ namespace Agora.Shared.Cache
                     var data = result.Data;
 
                     return UserProfile.Create(new EmporiumId(data.EmporiumId), new UserId(data.UserId), ReferenceNumber.Create(data.ReferenceNumber))
-                                      .WithOutbidNotifications(data.OutbidAlerts);
+                                      .SetOutbidNotifications(data.OutbidAlerts)
+                                      .SetReviewCount(data.Reviews)
+                                      .SetRating(data.Rating);
                 },
                 TimeSpan.FromMinutes(CacheExpirationInMinutes),
                 Tokens[guildId].Token);

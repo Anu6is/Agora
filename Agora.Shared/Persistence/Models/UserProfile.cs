@@ -7,7 +7,9 @@ namespace Agora.Shared.Persistence.Models
     {
         public EmporiumId EmporiumId { get; private set; }
         public ReferenceNumber UserReference { get; private set; }
-        public bool OutbidAlerts { get; set; }
+        public bool OutbidAlerts { get; private set; }
+        public ulong Reviews { get; private set; }
+        public decimal Rating { get; private set; }
 
         private UserProfile(UserId id) : base(id) { }
 
@@ -27,9 +29,23 @@ namespace Agora.Shared.Persistence.Models
             return profile;
         }
 
-        public UserProfile WithOutbidNotifications(bool enabled = true)
+        public UserProfile SetOutbidNotifications(bool enabled = true)
         {
             OutbidAlerts = enabled;
+
+            return this;
+        }
+
+        public UserProfile SetReviewCount(ulong count)
+        {
+            Reviews = count;
+
+            return this;
+        }
+
+        public UserProfile SetRating(decimal rating)
+        {
+            Rating = rating;
 
             return this;
         }

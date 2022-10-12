@@ -99,7 +99,7 @@ namespace Agora.Shared.Events
             {
                 using var scope = _scopeFactory.CreateScope();
                 var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-                await mediator.Send(new UpdateUserProfileCommand(profile.WithOutbidNotifications(false)), cancellationToken);
+                await mediator.Send(new UpdateUserProfileCommand(profile.SetOutbidNotifications(false)), cancellationToken);
             }
         }
     }
