@@ -22,12 +22,12 @@ namespace Agora.Shared.EconomyFactory
             if (userBalance == null) throw new ValidationException("Unable to verify user balance");
             if (userBalance.IsRateLimited) throw new RateLimitException($"UnbelievaBoat transaction processing is on cooldown. Retry after {userBalance.RetryAfter.Humanize()}");
 
-            return Money.Create(ParseToDecimal(userBalance.Total), currency);
+            return Money.Create(ParseToDecimal(userBalance.Cash < 0 ? userBalance.Total : userBalance.Bank), currency);
         }
 
         public override async ValueTask SetBalanceAsync(IEmporiumUser user, Money amount, string reason = "")
         {
-            var userBalance = await _unbelievaClient.SetUserBalanceAsync(user.EmporiumId.Value, user.ReferenceNumber.Value, 0, amount.Value, reason);
+            var userBalance = await _unbelievaClient.SetUserBankAsync(user.EmporiumId.Value, user.ReferenceNumber.Value, amount.Value, reason);
 
             if (userBalance.IsRateLimited) throw new RateLimitException($"UnbelievaBoat transaction processing is on cooldown. Retry after {userBalance.RetryAfter.Humanize()}");
 
@@ -36,7 +36,7 @@ namespace Agora.Shared.EconomyFactory
 
         public override async ValueTask DeleteBalanceAsync(IEmporiumUser user, Currency currency, string reason = "")
         {
-            var userBalance = await _unbelievaClient.SetUserBalanceAsync(user.EmporiumId.Value, user.ReferenceNumber.Value, 0, 0, reason);
+            var userBalance = await _unbelievaClient.SetUserBankAsync(user.EmporiumId.Value, user.ReferenceNumber.Value, 0, reason);
 
             if (userBalance.IsRateLimited) throw new RateLimitException($"UnbelievaBoat transaction processing is on cooldown. Retry after {userBalance.RetryAfter.Humanize()}");
 
@@ -60,7 +60,7 @@ namespace Agora.Shared.EconomyFactory
 
         public override async ValueTask<Money> DecreaseBalanceAsync(IEmporiumUser user, Money amount, string reason = "")
         {
-            var userBalance = await _unbelievaClient.DecreaseUserCashAsync(user.EmporiumId.Value, user.ReferenceNumber.Value, amount.Value, reason);
+            var userBalance = await _unbelievaClient.DecreaseUserBankAsync(user.EmporiumId.Value, user.ReferenceNumber.Value, amount.Value, reason);
 
             if (userBalance == null) await CheckEconomyAccess(user);
 
