@@ -24,7 +24,7 @@ namespace Agora.Shared.Events
 
             var score = notification.EmporiumUser.Reviews.GroupBy(x => x.Rating, (key, value) => key * value.Count()).Sum();
             var reviews = notification.EmporiumUser.Reviews.Count;
-            var rating = Math.Round((decimal)score / reviews, 1);
+            var rating = reviews == 0 ? 0m : Math.Round((decimal)score / reviews, 1);
 
             profile.SetReviewCount((ulong)reviews).SetRating(rating);
 
