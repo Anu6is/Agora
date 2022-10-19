@@ -1,0 +1,83 @@
+﻿{
+  "Facts": [
+    {
+      "Summary": "Enabling **server economy** means that user's will require a balance when making bids.\n\n_By default ecomony is **disabled**_",
+      "Details": ""
+    },
+    {
+      "Summary": "You can register categories and subcategories with the </server categories:1013361602499723275> command.",
+      "Details": "Categories can assist users in searching for specific types of listing.\n\nIf a **Forum Channel** is used as a showroom, the listing category is added as a `tag` which can be used to filter posts."
+    },
+    {
+      "Summary": "Managers can undo bids even after the recall limit has expired.",
+      "Details": "You  can change the **Bidding Recall Limit** using the </server settings:1013361602499723275> command."
+    },
+    {
+      "Summary": "For **Live Auctions**, the **timeout** countdown begins **AFTER** the first bid has been made.",
+      "Details": ""
+    },
+    {
+      "Summary": "You can only have **ONE** submitted bid for **Sealed Auctions**.\nIf you wish to submit a second bid, you must first **undo** your first bid.",
+      "Details": ""
+    },
+    {
+      "Summary": "When you win a **Sealed Auction**, you actually pay the amount bid by the __second highest bidder__.",
+      "Details": ""
+    },
+    {
+      "Summary": "The type of channel selected for a showroom determines the bahaviour of the showroom.",
+      "Details": "**Text Channel** - single channel showroom where each listing has a dedicated thread for additional commands.\n\n**Announcement Channel** - similar to text channels but restricted to 10 listings per hour due to the Discord publishing limit\n\n**Category Channel** - a new channel a created for each listing that is added\n\n**Forum Channel** - a new forum post is created for each listing that is added. If the listing includes a category, matching tags are added to the post."
+    },
+    {
+      "Summary": "You can set a schedule ([example] Schedule: Friday 18:00) as the **Channel Topic** to force items listed bofore the scheduled time to end at the scheduled time.",
+      "Details": ""
+    },
+    {
+      "Summary": "You can set a schedule ([example] Schedule: Friday 18:00) as the **Forum Post Guideline** to force items listed bofore the scheduled time to end at the scheduled time.",
+      "Details": ""
+    },
+    {
+      "Summary": "You can rate the service provided by a seller using the </review transaction:1029868295114985472> **message command**.",
+      "Details": "Simply `right-click` on a successful transaction message in the **result log** channel.\nSelect `apps` -> `review transaction`.\n\n> Once a seller has at least 10 reviews, they will be assigned a rating from 1-5."
+    },
+    {
+      "Summary": "You can view the rating of any merchant that has received **at least 10 reviews** using the </merchant rating:1029868297774182461> **merchant rating** command.",
+      "Details": "Simply `right-click` on a user/user mention\nSelect `apps` -> `merchant rating`.\n\nThe number of reviews received, as well as the current merchant rating will be displayed."
+    },
+    {
+      "Summary": "Follow [Change Log](https://discord.com/channels/392774790945046538/392775818834739200) to be notified when new features are implemented... Join the [Support Server](https://discord.gg/WmCpC8G)",
+      "Details": ""
+    },
+    {
+      "Summary": "Follow [Announcements](https://discord.com/channels/392774790945046538/1023636161308151918) to be notified about maintenance, downtime or required actions needed after critical fixes.\n\nJoin the [Support Server](https://discord.gg/WmCpC8G)",
+      "Details": ""
+    },
+    {
+      "Summary": "Listings can be created anonymously by setting **anonymous** to `true` when executing the listing command.\n\n> The owner is revealed in the result logs.",
+      "Details": ""
+    },
+    {
+      "Summary": "We accept [Feedback & Suggestions](https://discord.com/channels/392774790945046538/1020373227077382164) ... Join the [Support Server](https://discord.gg/WmCpC8G)",
+      "Details": ""
+    },
+    {
+      "Summary": "You can review the bot @ [Top.gg - Auction Bot](https://top.gg/bot/372831574942679040)",
+      "Details": ""
+    },
+    {
+      "Summary": "**Forum Channels** are the top recommendation for showrooms.",
+      "Details": "When using a Forum Channel as showroom, it is recommended to use a **pinned** forum post as the main place for executing listing commands."
+    },
+    {
+      "Summary": "Only Managers can update the details of a listing after an offer has been made.",
+      "Details": ""
+    },
+    {
+      "Summary": "You can prevent users from withdrawing their bids by **disabling** the **Recall Bid Limit** setting in </server settings:1013361602499723275>",
+      "Details": ""
+    },
+    {
+      "Summary": "You can add up to four **(4)** images to a listing by using the </image link:1019941814272278568> or </image upload:1019941814272278568> commands"
+    }
+  ]
+}

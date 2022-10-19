@@ -41,6 +41,8 @@ namespace Agora.Shared.Extensions
             foreach (Type serviceType in types)
                 services.AddAgoraService(serviceType);
 
+            services.AddSingleton(new Random());
+
             return services;
         }
 
