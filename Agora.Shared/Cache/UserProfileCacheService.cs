@@ -56,7 +56,7 @@ namespace Agora.Shared.Cache
                     var result = await mediator.Send(new GetUserProfileQuery(emporiumId, reference), cts);
 
                     if (result.Data == null)
-                    {                        
+                    {
                         var user = await scope.ServiceProvider.GetRequiredService<IEmporiaCacheService>().GetUserAsync(guildId, userReference);
                         var profile = await mediator.Send(new CreateUserProfileCommand(new EmporiumId(user.EmporiumId), new UserId(user.UserId), ReferenceNumber.Create(user.ReferenceNumber)), cts);
 
@@ -65,6 +65,7 @@ namespace Agora.Shared.Cache
                     var data = result.Data;
 
                     return UserProfile.Create(new EmporiumId(data.EmporiumId), new UserId(data.UserId), ReferenceNumber.Create(data.ReferenceNumber))
+                                      .SetTradeDealNotifications(data.TradeDealAlerts)
                                       .SetOutbidNotifications(data.OutbidAlerts)
                                       .SetReviewCount(data.Reviews)
                                       .SetRating(data.Rating);

@@ -137,7 +137,7 @@ namespace Agora.Shared.Cache
         public CachedEmporiumProduct GetCachedProduct(ulong guildId, ulong productId)
             => _emporiumCache.GetOrDefault<CachedEmporiumProduct>($"product:{guildId}:{productId}", token: Tokens[guildId].Token);
 
-        public  async ValueTask<CachedEmporiumProduct> GetProductAsync(ulong guildId, ulong showroomId,
+        public async ValueTask<CachedEmporiumProduct> GetProductAsync(ulong guildId, ulong showroomId,
                                                                        ulong productReference, bool uniqueRoom = false)
         {
             if (!Tokens.ContainsKey(guildId))
@@ -146,7 +146,7 @@ namespace Agora.Shared.Cache
             return await _emporiumCache.GetOrSetAsync(
                 $"product:{guildId}:{(uniqueRoom ? showroomId : productReference)}",
                 async cts => await _serviceProvider.GetRequiredService<IProductService>().GetProductAsync(showroomId, productReference),
-                TimeSpan.FromMinutes(ShortCacheExpirtionInMinutes), 
+                TimeSpan.FromMinutes(ShortCacheExpirtionInMinutes),
                 Tokens[guildId].Token);
         }
     }

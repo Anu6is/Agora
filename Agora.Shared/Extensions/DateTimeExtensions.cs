@@ -5,7 +5,7 @@
         public static DateTime OverrideStartDate(this DateTime endDate, DateTime currentDate, (DayOfWeek Weekday, TimeSpan Time)[] overrides, TimeSpan duration)
         {
             var index = Array.FindIndex(overrides, x => x.Weekday == endDate.DayOfWeek && x.Time == endDate.TimeOfDay);
-            var (Weekday, Time) = index == 0? overrides.Last() : overrides[index - 1];
+            var (Weekday, Time) = index == 0 ? overrides.Last() : overrides[index - 1];
             var nextSchedule = currentDate.Next(Weekday, Time);
             var earliestTime = currentDate < nextSchedule ? currentDate : nextSchedule;
             var desiredTime = endDate.Subtract(duration);

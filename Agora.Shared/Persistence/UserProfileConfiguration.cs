@@ -14,6 +14,7 @@ namespace Agora.Shared.Persistence
             builder.ToTable("UserProfile");
             builder.HasKey(profile => profile.Id);
             builder.Property(profile => profile.OutbidAlerts);
+            builder.Property(profile => profile.TradeDealAlerts).HasDefaultValue(true);
             builder.Property(profile => profile.EmporiumId);
             builder.HasIndex(profile => profile.UserReference);
             builder.HasOne<Emporium>().WithMany().HasForeignKey(x => x.EmporiumId)

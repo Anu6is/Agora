@@ -7,24 +7,35 @@ namespace Agora.Shared.Services
 {
     public class LoggingLevelSwitcher : ILoggingLevelSwitcher
     {
-        public LoggingLevelSwitch LevelSwitch { get; }
+        public LoggingLevelSwitch DefaultLevelSwitch { get; }
+        public LoggingLevelSwitch EntityFrameworkLevelSwitch { get; }
+
 
         private readonly IConfiguration _configuration;
         public LoggingLevelSwitcher(IConfiguration configuration)
         {
             _configuration = configuration;
-            LevelSwitch = new LoggingLevelSwitch();
+            DefaultLevelSwitch = new LoggingLevelSwitch();
+            EntityFrameworkLevelSwitch = new LoggingLevelSwitch();
         }
 
         public void SetMinimumLevelFromConfiguration()
         {
             var minLogLevel = _configuration.GetDefaultLogLevel();
+            var entityLogLevel = _configuration.GetOverrideLoglevel("Microsoft.EntityFrameworkCore");
+
             SetMinimumLevel(minLogLevel);
+            SetOverrideLevel(entityLogLevel);
         }
 
         public void SetMinimumLevel(LogEventLevel level)
         {
-            LevelSwitch.MinimumLevel = level;
+            DefaultLevelSwitch.MinimumLevel = level;
+        }
+
+        public void SetOverrideLevel(LogEventLevel level)
+        {
+            EntityFrameworkLevelSwitch.MinimumLevel = level;
         }
     }
 }

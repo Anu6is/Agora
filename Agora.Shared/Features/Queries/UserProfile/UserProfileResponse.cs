@@ -6,6 +6,7 @@
         public ulong EmporiumId { get; set; }
         public ulong ReferenceNumber { get; set; }
         public bool OutbidAlerts { get; set; }
+        public bool TradeDealAlerts { get; set; }
         public ulong Reviews { get; set; }
         public decimal Rating { get; set; }
     }

@@ -73,11 +73,24 @@
       "Details": ""
     },
     {
-      "Summary": "You can prevent users from withdrawing their bids by **disabling** the **Recall Bid Limit** setting in </server settings:1013361602499723275>",
+      "Summary": "You can prevent users from withdrawing their bids by **disabling** the **Recall Bid Limit** setting in </server settings:1013361602499723275>.",
       "Details": ""
     },
     {
-      "Summary": "You can add up to four **(4)** images to a listing by using the </image link:1019941814272278568> or </image upload:1019941814272278568> commands"
+      "Summary": "You can add up to four **(4)** images to a listing by using the </image link:1019941814272278568> or </image upload:1019941814272278568> commands.",
+      "Details": ""
+    },
+    {
+      "Summary": "By default, **everyone** can list items in the market/auction/trade. To restrict this action to specific users, set a **Merchant role**.",
+      "Details": "Roles can be set using </server settings:1013361602499723275> or </server roles set:1013361602499723275>."
+    },
+    {
+      "Summary": "By default, **everyone** can buy/bid/trade available listings. To restrict this action to specific users, set a **Buyer role**.",
+      "Details": "Roles can be set using </server settings:1013361602499723275> or </server roles set:1013361602499723275>."
+    },
+    {
+      "Summary": "You can determine what type of listing can be created by configuring the **Allowed Listings**.",
+      "Details": "Select **Allowed Listings** in </server settings:1013361602499723275> and choose the listing types that are right for your server."
     }
   ]
 }

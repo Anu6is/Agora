@@ -19,7 +19,7 @@ namespace Agora.Shared.Events
 
         public async Task Handle(ReviewDeletedNotification notification, CancellationToken cancellationToken)
         {
-            var profile = (UserProfile) await _userProfileService.GetUserProfileAsync(notification.EmporiumUser.EmporiumId.Value,
+            var profile = (UserProfile)await _userProfileService.GetUserProfileAsync(notification.EmporiumUser.EmporiumId.Value,
                                                                                       notification.Review.ReferenceNumber.Value);
 
             var score = notification.EmporiumUser.Reviews.GroupBy(x => x.Rating, (key, value) => key * value.Count()).Sum();

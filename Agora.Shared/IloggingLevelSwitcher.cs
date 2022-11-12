@@ -5,10 +5,13 @@ namespace Agora.Shared
 {
     public interface ILoggingLevelSwitcher
     {
-        LoggingLevelSwitch LevelSwitch { get; }
+        LoggingLevelSwitch DefaultLevelSwitch { get; }
+        LoggingLevelSwitch EntityFrameworkLevelSwitch { get; }
 
         void SetMinimumLevelFromConfiguration();
 
         void SetMinimumLevel(LogEventLevel level);
+        void SetOverrideLevel(LogEventLevel level);
+
     }
 }

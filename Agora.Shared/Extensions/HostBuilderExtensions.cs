@@ -1,6 +1,7 @@
 ﻿using Agora.Shared.Attributes;
 using Agora.Shared.Services;
 using Believe.Net;
+using Emporia.Application.Common;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +22,7 @@ namespace Agora.Shared.Extensions
             foreach (var assemblyName in externalAssemblies)
             {
                 var assembly = Assembly.LoadFrom(assemblyName);
-                    
+
                 if (assembly.GetTypes().Any(t => t.IsAssignableTo(typeof(ICommandModuleBase)) && !t.IsAbstract)) assemblies.Add(assembly);
             }
 
@@ -42,6 +43,7 @@ namespace Agora.Shared.Extensions
                 services.AddAgoraService(serviceType);
 
             services.AddSingleton(new Random());
+            services.AddSingleton(typeof(IProductQueueService<,>), typeof(DefaultProductQueueService<,>));
 
             return services;
         }
