@@ -1,4 +1,5 @@
-﻿using Believe.Net;
+﻿using Agora.Shared.Attributes;
+using Believe.Net;
 using Emporia.Domain.Common;
 using FluentValidation;
 using Humanizer;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Agora.Shared.EconomyFactory
 {
+    [AgoraService(AgoraServiceAttribute.ServiceLifetime.Transient)]
     public class UnbelievaBoatEconomy : EconomyService
     {
         private readonly UnbelievaClient _unbelievaClient;

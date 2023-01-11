@@ -1,4 +1,5 @@
-﻿using Agora.Shared.Persistence.Models;
+﻿using Agora.Shared.Attributes;
+using Agora.Shared.Persistence.Models;
 using Emporia.Application.Common;
 using Emporia.Domain.Common;
 using Emporia.Extensions.Discord;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Agora.Shared.EconomyFactory
 {
+    [AgoraService(AgoraServiceAttribute.ServiceLifetime.Transient)]
     public class AgoraEconomy : EconomyService
     {
         private readonly IDataAccessor _dataAccessor;
@@ -81,6 +83,8 @@ namespace Agora.Shared.EconomyFactory
                 member = DefaultEconomyUser.FromEmporiumUser(user).WithBalance(settings.DefaultBalance);
 
                 _dataAccessor.Create(member);
+
+                await _dataAccessor.CommitAsync();
             }
 
             return member;

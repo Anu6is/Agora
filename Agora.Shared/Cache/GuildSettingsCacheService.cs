@@ -1,5 +1,6 @@
 ﻿using Agora.Shared.Services;
 using Emporia.Extensions.Discord;
+using Emporia.Extensions.Discord.Features.Commands;
 using Emporia.Extensions.Discord.Features.Queries;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -61,6 +62,12 @@ namespace Agora.Shared.Cache
                            },
                            TimeSpan.FromMinutes(CacheExpirationInMinutes),
                            Tokens[guildId].Token);
+        }
+
+        public async ValueTask UpdateGuildSettingsAync(IDiscordGuildSettings settings)
+        {
+            using var scope = _scopeFactory.CreateScope();
+            await scope.ServiceProvider.GetRequiredService<IMediator>().Send(new UpdateGuildSettingsCommand((DefaultDiscordGuildSettings)settings));
         }
     }
 }

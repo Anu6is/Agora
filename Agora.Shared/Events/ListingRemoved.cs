@@ -1,9 +1,13 @@
-﻿using Agora.Shared.EconomyFactory;
+﻿using Agora.Shared.Cache;
+using Agora.Shared.EconomyFactory;
+using Emporia.Application.Common;
+using Emporia.Application.Features.Commands;
 using Emporia.Domain.Common;
 using Emporia.Domain.Entities;
 using Emporia.Domain.Events;
 using Emporia.Extensions.Discord;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Agora.Shared.Events
 {
@@ -114,6 +118,48 @@ namespace Agora.Shared.Events
             }
 
             return;
+        }
+    }
+
+    internal class ScheduledListingRemoved : INotificationHandler<ListingRemovedNotification>
+    {
+        private readonly IMediator _meidator;
+        private readonly ICurrentUserService _userService;
+        private readonly IGuildSettingsService _settingsService;
+
+        public ScheduledListingRemoved(IMediator mediator, ICurrentUserService userService, IGuildSettingsService settingsService)
+        {
+            _meidator = mediator;
+            _userService = userService;
+            _settingsService = settingsService;
+        }
+
+        public async Task Handle(ListingRemovedNotification notification, CancellationToken cancellationToken)
+        {
+            if (!notification.ProductListing.IsScheduled) return;
+            if (notification.ProductListing.Status == ListingStatus.Withdrawn) return;
+
+            _userService.CurrentUser = notification.ProductListing.Owner;
+
+            await _meidator.Send(new RepostListingCommand(notification.EmporiumId, notification.ShowroomId, notification.ProductListing), cancellationToken);
+            
+            var settingsCache = (GuildSettingsCacheService)_settingsService;
+            await settingsCache.UpdateGuildSettingsAync(await settingsCache.GetGuildSettingsAsync(notification.EmporiumId.Value));
+        }
+    }
+
+    internal class ListingRemovedQueue : INotificationHandler<ListingRemovedNotification> 
+    {
+        private readonly IProductQueueService<Command<Listing>, Listing> _queueService;
+
+        public ListingRemovedQueue(IProductQueueService<Command<Listing>, Listing> productQueueService)
+        {
+            _queueService = productQueueService;
+        }
+
+        public async Task Handle(ListingRemovedNotification notification, CancellationToken cancellationToken)
+        {
+            await _queueService.DequeueAsync(notification.ProductListing.Id);
         }
     }
 }

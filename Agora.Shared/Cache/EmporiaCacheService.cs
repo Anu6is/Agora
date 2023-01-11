@@ -149,5 +149,29 @@ namespace Agora.Shared.Cache
                 TimeSpan.FromMinutes(ShortCacheExpirtionInMinutes),
                 Tokens[guildId].Token);
         }
+
+        public async ValueTask AddShowroomListingAsync(Showroom showroom)
+        {
+            if (!Tokens.ContainsKey(showroom.EmporiumId.Value))
+                Tokens.TryAdd(showroom.EmporiumId.Value, new CancellationTokenSource());
+
+            await _emporiumCache.SetAsync($"listing:{showroom.Listings.First().Id.Value}",
+                                                     showroom,
+                                                     TimeSpan.FromMinutes(LongCacheExpirationInMinutes),
+                                                     Tokens[showroom.EmporiumId.Value].Token);
+            return;
+        }
+
+        public async ValueTask<Showroom> GetShowroomListingAsync(Showroom showroom)
+        {
+            if (!Tokens.ContainsKey(showroom.EmporiumId.Value))
+                Tokens.TryAdd(showroom.EmporiumId.Value, new CancellationTokenSource());
+
+            return await _emporiumCache.GetOrSetAsync(
+                $"listing:{showroom.Listings.First().Id.Value}",
+                showroom,
+                TimeSpan.FromMinutes(ShortCacheExpirtionInMinutes),
+                Tokens[showroom.EmporiumId.Value].Token);
+        }
     }
 }

@@ -91,6 +91,10 @@
     {
       "Summary": "You can determine what type of listing can be created by configuring the **Allowed Listings**.",
       "Details": "Select **Allowed Listings** in </server settings:1013361602499723275> and choose the listing types that are right for your server."
+    },
+    {
+      "Summary": "You can schedule listings to start at a future date. The item will be posted but users would not be able to buy/bid/claim until the scheduled time.",
+      "Details": "To set the `scheduled-start` to either a future time (example: 16:00) or a furture date and time (example: 2025-12-31 15:00)"
     }
   ]
 }

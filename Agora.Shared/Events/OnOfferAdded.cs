@@ -38,17 +38,6 @@ namespace Agora.Shared.Events
             else if (notification.Offer is Bid bid)
             {
                 await economy.DecreaseBalanceAsync(economyUser, bid.Amount, $"Submitted bid for {notification.Listing.Product.Quantity} {notification.Listing.Product.Title}");
-
-                if (notification.Listing is VickreyAuction) return;
-
-                var item = notification.Listing.Product as AuctionItem;
-
-                if (item.Offers.Count <= 1) return;
-
-                var previousBid = item.Offers.OrderByDescending(x => x.SubmittedOn).Skip(1).First();
-                user = await _emporiaCache.GetUserAsync(notification.Listing.Owner.EmporiumId.Value, previousBid.UserReference.Value);
-
-                await economy.IncreaseBalanceAsync(user.ToEmporiumUser(), previousBid.Amount, $"Bid returned for {notification.Listing.Product.Quantity} {notification.Listing.Product.Title}");
             }
 
             return;
