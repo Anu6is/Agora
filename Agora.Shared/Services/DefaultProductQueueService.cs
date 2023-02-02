@@ -4,7 +4,6 @@ using Emporia.Domain.Entities;
 using Emporia.Extensions.Discord;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Sentry;
 using System.Collections.Concurrent;
 using System.Threading.Channels;
 
