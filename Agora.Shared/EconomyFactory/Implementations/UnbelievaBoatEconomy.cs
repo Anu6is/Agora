@@ -49,7 +49,8 @@ namespace Agora.Shared.EconomyFactory
         {
             var userBalance = await _unbelievaClient.IncreaseUserBankAsync(user.EmporiumId.Value, user.ReferenceNumber.Value, amount.Value, reason);
 
-            if (userBalance == null) await CheckEconomyAccess(user);
+            if (userBalance == null) 
+                await CheckEconomyAccess(user);
 
             if (userBalance.IsRateLimited)
             {
@@ -64,7 +65,8 @@ namespace Agora.Shared.EconomyFactory
         {
             var userBalance = await _unbelievaClient.DecreaseUserBankAsync(user.EmporiumId.Value, user.ReferenceNumber.Value, amount.Value, reason);
 
-            if (userBalance == null) await CheckEconomyAccess(user);
+            if (userBalance == null) 
+                await CheckEconomyAccess(user);
 
             if (userBalance.IsRateLimited) throw new RateLimitException($"UnbelievaBoat transaction processing is on cooldown. Retry after {userBalance.RetryAfter.Humanize()}");
 
@@ -78,7 +80,7 @@ namespace Agora.Shared.EconomyFactory
             if (!economyAccess)
                 throw new UnauthorizedAccessException("Auction Bot needs to be authorized to use UnbelivaBoat economy in this server!");
 
-            throw new NullReferenceException("An error occurred while attempting to access the UnbelievaBoat balance");
+            throw new UnauthorizedAccessException("Unable to validate user's UnbelievaBoat balance");
         }
 
         private static decimal ParseToDecimal(double value)

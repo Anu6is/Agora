@@ -7,7 +7,6 @@ using Emporia.Domain.Entities;
 using Emporia.Domain.Events;
 using Emporia.Extensions.Discord;
 using MediatR;
-using Microsoft.Extensions.Logging;
 
 namespace Agora.Shared.Events
 {
