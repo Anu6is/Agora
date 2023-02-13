@@ -1,4 +1,5 @@
 ﻿using Agora.Shared.Services;
+using Emporia.Domain.Common;
 using Emporia.Extensions.Discord;
 using Emporia.Extensions.Discord.Features.Commands;
 using Emporia.Extensions.Discord.Features.Queries;
@@ -29,9 +30,11 @@ namespace Agora.Shared.Cache
         public void Clear(ulong guildId)
         {
             _settingsCache.Remove($"settings:{guildId}");
+            _settingsCache.Remove($"required:{guildId}:{ListingType.Auction}");
+            _settingsCache.Remove($"required:{guildId}:{ListingType.Market}");
+            _settingsCache.Remove($"required:{guildId}:{ListingType.Trade}");
 
-            if (Tokens.TryRemove(guildId, out var source))
-                source.Cancel();
+            if (Tokens.TryRemove(guildId, out var source)) source.Cancel();
         }
 
         public async ValueTask AddGuildSettingsAsync(IDiscordGuildSettings settings)
@@ -68,6 +71,42 @@ namespace Agora.Shared.Cache
         {
             using var scope = _scopeFactory.CreateScope();
             await scope.ServiceProvider.GetRequiredService<IMediator>().Send(new UpdateGuildSettingsCommand((DefaultDiscordGuildSettings)settings));
+        }
+
+        public async ValueTask<IListingRequirements> GetListingRequirementsAsync(ulong guildId, ListingType listingType)
+        {
+            if (!Tokens.ContainsKey(guildId))
+                Tokens.TryAdd(guildId, new CancellationTokenSource());
+
+            return await _settingsCache.GetOrSetAsync<IListingRequirements>(
+                           $"required:{guildId}:{listingType}",
+                           async cts =>
+                           {
+                               using var scope = _scopeFactory.CreateScope();
+                               var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                               var result = await mediator.Send(new GetListingRequirementDetailsQuery(guildId, listingType), cts);
+
+                               return result.Data ?? await mediator.Send(new CreateListingRequirementsCommand(guildId, listingType), cts);
+                           },
+                           TimeSpan.FromMinutes(CacheExpirationInMinutes),
+                           Tokens[guildId].Token);
+        }
+
+        public async ValueTask UpdateListingRequirementsAsync(IListingRequirements requirements)
+        {
+            using var scope = _scopeFactory.CreateScope();
+            await scope.ServiceProvider.GetRequiredService<IMediator>().Send(new UpdateListingRequirementsCommand((DefaultListingRequirements)requirements));
+        }
+
+        public async ValueTask AddListingRequirementsAsync(IListingRequirements requirements)
+        {
+            if (!Tokens.ContainsKey(requirements.GuildId))
+                Tokens.TryAdd(requirements.GuildId, new CancellationTokenSource());
+
+            await _settingsCache.SetAsync($"required:{requirements.GuildId}:{requirements.ListingType}",
+                                          requirements,
+                                          TimeSpan.FromMinutes(CacheExpirationInMinutes),
+                                          Tokens[requirements.GuildId].Token);
         }
     }
 }
