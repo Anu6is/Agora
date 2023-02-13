@@ -1,5 +1,4 @@
-﻿using Agora.Shared.Cache;
-using Agora.Shared.EconomyFactory;
+﻿using Agora.Shared.EconomyFactory;
 using Emporia.Application.Common;
 using Emporia.Application.Features.Commands;
 using Emporia.Domain.Common;
@@ -142,8 +141,7 @@ namespace Agora.Shared.Events
 
             await _meidator.Send(new RepostListingCommand(notification.EmporiumId, notification.ShowroomId, notification.ProductListing), cancellationToken);
             
-            var settingsCache = (GuildSettingsCacheService)_settingsService;
-            await settingsCache.UpdateGuildSettingsAync(await settingsCache.GetGuildSettingsAsync(notification.EmporiumId.Value));
+            await _settingsService.UpdateGuildSettingsAync(await _settingsService.GetGuildSettingsAsync(notification.EmporiumId.Value));
         }
     }
 
