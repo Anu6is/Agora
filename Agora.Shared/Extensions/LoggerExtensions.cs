@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
+using Sentry;
 using Sentry.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
@@ -36,10 +37,12 @@ namespace Agora.Shared.Extensions
             return builder;
         }
 
-        public static ILoggingBuilder AddSentry(this ILoggingBuilder builder, HostBuilderContext context)
+        public static ILoggingBuilder AddSentry(this ILoggingBuilder builder,
+                                                HostBuilderContext context,
+                                                Func<SentryEvent, SentryEvent> sentryCallback = null)
         {
             builder.Services.Configure<SentryLoggingOptions>(context.Configuration.GetSection("Sentry"));
-            builder.AddSentry();
+            builder.AddSentry(options => options.BeforeSend += sentryCallback);
             return builder;
         }
 
