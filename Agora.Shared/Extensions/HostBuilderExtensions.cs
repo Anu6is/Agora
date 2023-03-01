@@ -1,4 +1,5 @@
 ﻿using Agora.Shared.Attributes;
+using Agora.Shared.EconomyFactory;
 using Agora.Shared.Services;
 using Believe.Net;
 using Emporia.Application.Common;
@@ -93,6 +94,9 @@ namespace Agora.Shared.Extensions
 
             services.AddSingleton(unbelievaClientConfig);
             services.AddSingleton<UnbelievaClient>();
+
+            services.AddHttpClient(RaidHelperClient.SectionName);
+            services.AddSingleton<RaidHelperClient>();
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddMediatR(x => x.AsScoped(), Assembly.GetExecutingAssembly());
