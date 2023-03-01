@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Agora.Shared.EconomyFactory
 {
-    public enum EconomyType { Disabled, AuctionBot, UnbelievaBoat }
+    public enum EconomyType { Disabled, AuctionBot, UnbelievaBoat, RaidHelper }
 
     [AgoraService(AgoraServiceAttribute.ServiceLifetime.Transient)]
     public class EconomyFactoryService : AgoraService
@@ -21,6 +21,7 @@ namespace Agora.Shared.EconomyFactory
             nameof(EconomyType.Disabled) => _serviceProvider.GetRequiredService<PseudoEconomy>(),
             nameof(EconomyType.AuctionBot) => _serviceProvider.GetRequiredService<AgoraEconomy>(),
             nameof(EconomyType.UnbelievaBoat) => _serviceProvider.GetRequiredService<UnbelievaBoatEconomy>(),
+            nameof(EconomyType.RaidHelper) => _serviceProvider.GetRequiredService<RaidHelperEconomy>(),
             _ => throw new NotImplementedException($"No implementation exists for {economyType}")
         };
     }
