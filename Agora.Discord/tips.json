@@ -5,6 +5,14 @@
       "Details": ""
     },
     {
+      "Summary": "UnbelievaBoat can be used as the Economy provider.",
+      "Details": "When linked to UnbelievaBoat, the user's UnbelievaBoat balance increases/decreases after sales/purchases'"
+    },
+    {
+      "Summary": "Raid-Helper can be used as the Economy provider",
+      "Details": "When linked to Raid-Helper, the DKP system is used when buying/selling items."
+    },
+    {
       "Summary": "You can register categories and subcategories with the </server categories:1013361602499723275> command.",
       "Details": "Categories can assist users in searching for specific types of listing.\n\nIf a **Forum Channel** is used as a showroom, the listing category is added as a `tag` which can be used to filter posts."
     },
@@ -99,6 +107,10 @@
     {
       "Summary": "You can confirm if your showrooms are correctly setup by using the **Permissions** button on the </server rooms:1013361602499723275> menu",
       "Details": "The button shows if the Bot is missing any required Discord permissions on the assigned Bot channels"
+    },
+    {
+      "Summary": "You can switch to Inline Result Logs - Logs are posted in the channel the item was listed in.",
+      "Details": "</server settings:1013361602499723275> -> select Result Log -> [Inline Logs] Button"
     }
   ]
 }
