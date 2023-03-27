@@ -6,20 +6,20 @@ using Microsoft.Extensions.Logging;
 namespace Agora.Shared.EconomyFactory
 {
     [AgoraService(AgoraServiceAttribute.ServiceLifetime.Transient)]
-    public class RaidHelperEconomy : EconomyService 
+    public class RaidHelperEconomy : EconomyService
     {
         private readonly RaidHelperClient _raidHelperClient;
 
-        public RaidHelperEconomy(RaidHelperClient client, ILogger<RaidHelperEconomy> logger) : base(logger) 
+        public RaidHelperEconomy(RaidHelperClient client, ILogger<RaidHelperEconomy> logger) : base(logger)
         {
             _raidHelperClient = client;
         }
 
         public override async ValueTask<Money> GetBalanceAsync(IEmporiumUser user, Currency currency)
         {
-            var entity = await _raidHelperClient.GetUserBalanceAsync(user.EmporiumId.Value, user.ReferenceNumber.Value) 
+            var entity = await _raidHelperClient.GetUserBalanceAsync(user.EmporiumId.Value, user.ReferenceNumber.Value)
                 ?? throw new ValidationException("Unable to verify DKP balance");
-            
+
             _ = decimal.TryParse(entity.Dkp, out var dkp);
 
             return Money.Create(dkp, currency);
@@ -27,7 +27,7 @@ namespace Agora.Shared.EconomyFactory
 
         public override async ValueTask<Money> IncreaseBalanceAsync(IEmporiumUser user, Money amount, string reason = "")
         {
-            var entity = await _raidHelperClient.IncreaseUserBalanceAsync(user.EmporiumId.Value, user.ReferenceNumber.Value, amount.Value, reason) 
+            var entity = await _raidHelperClient.IncreaseUserBalanceAsync(user.EmporiumId.Value, user.ReferenceNumber.Value, amount.Value, reason)
                 ?? throw new ValidationException("Failed to increase DKP balance");
 
             _ = decimal.TryParse(entity.Dkp, out var dkp);

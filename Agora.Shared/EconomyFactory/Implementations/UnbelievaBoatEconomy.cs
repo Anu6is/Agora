@@ -49,7 +49,7 @@ namespace Agora.Shared.EconomyFactory
         {
             var userBalance = await _unbelievaClient.IncreaseUserBankAsync(user.EmporiumId.Value, user.ReferenceNumber.Value, amount.Value, reason);
 
-            if (userBalance == null) 
+            if (userBalance == null)
                 await CheckEconomyAccess(user);
 
             if (userBalance.IsRateLimited)
@@ -65,7 +65,7 @@ namespace Agora.Shared.EconomyFactory
         {
             var userBalance = await _unbelievaClient.DecreaseUserBankAsync(user.EmporiumId.Value, user.ReferenceNumber.Value, amount.Value, reason);
 
-            if (userBalance == null) 
+            if (userBalance == null)
                 await CheckEconomyAccess(user);
 
             if (userBalance.IsRateLimited) throw new RateLimitException($"UnbelievaBoat transaction processing is on cooldown. Retry after {userBalance.RetryAfter.Humanize()}");
