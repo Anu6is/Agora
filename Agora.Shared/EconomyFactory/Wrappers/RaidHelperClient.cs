@@ -36,9 +36,9 @@ namespace Agora.Shared.EconomyFactory
 
         public async Task<RaidHelperResponse> SetUserBalanceAsync(ulong guildId, ulong userId, decimal value, string reason = null)
         {
-            return await SendRequestAsync(HttpMethod.Patch, guildId.ToString(), userId.ToString(), new 
-            { 
-                operation = "set", 
+            return await SendRequestAsync(HttpMethod.Patch, guildId.ToString(), userId.ToString(), new
+            {
+                operation = "set",
                 value = value.ToString(),
                 description = reason ?? string.Empty
             });
@@ -88,7 +88,7 @@ namespace Agora.Shared.EconomyFactory
                 throw new ValidationException($"Failed to process DKP request: {response.ReasonPhrase}");
 
             var responseContent = await response.Content.ReadAsStringAsync();
-            
+
             return JsonSerializer.Deserialize<ResponseList>(responseContent).Results.First();
         }
     }

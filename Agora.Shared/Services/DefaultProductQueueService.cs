@@ -15,7 +15,7 @@ namespace Agora.Shared.Services
 
         private readonly List<Task> _tasks = new();
         private readonly ConcurrentDictionary<ListingId, Channel<(IProductListingBinder, RequestHandlerDelegate<TResponse>)>> _channels = new();
-        
+
         private readonly ILogger _logger;
         private readonly IEmporiaCacheService _cache;
 
@@ -102,7 +102,7 @@ namespace Agora.Shared.Services
         public async Task EnqueueAsync(TRequest command, RequestHandlerDelegate<TResponse> next)
         {
             if (command is not IProductListingBinder binder) throw new InvalidOperationException();
-            
+
             await _channels[binder.Showroom.Listings.First().Id].Writer.WriteAsync((binder, next));
         }
 

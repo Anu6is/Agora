@@ -140,12 +140,12 @@ namespace Agora.Shared.Events
             _userService.CurrentUser = notification.ProductListing.Owner;
 
             await _meidator.Send(new RepostListingCommand(notification.EmporiumId, notification.ShowroomId, notification.ProductListing), cancellationToken);
-            
+
             await _settingsService.UpdateGuildSettingsAync(await _settingsService.GetGuildSettingsAsync(notification.EmporiumId.Value));
         }
     }
 
-    internal class ListingRemovedQueue : INotificationHandler<ListingRemovedNotification> 
+    internal class ListingRemovedQueue : INotificationHandler<ListingRemovedNotification>
     {
         private readonly IProductQueueService<Command<Listing>, Listing> _queueService;
 
