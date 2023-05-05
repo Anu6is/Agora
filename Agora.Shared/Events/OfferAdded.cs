@@ -1,6 +1,7 @@
 ﻿using Agora.Shared.EconomyFactory;
 using Emporia.Application.Common;
 using Emporia.Application.Specifications;
+using Emporia.Domain.Common;
 using Emporia.Domain.Entities;
 using Emporia.Domain.Events;
 using Emporia.Extensions.Discord;
@@ -29,11 +30,10 @@ namespace Agora.Shared.Events
 
             if (guildSettings.EconomyType == "Disabled") return;
             if (notification.Listing is VickreyAuction) return;
-            if (notification.Listing.Product is not AuctionItem item) return;
+            if (notification.Listing.Product is TradeItem) return;
+            if (notification.Listing.Product is MarketItem && notification.Listing.Status >= ListingStatus.Withdrawn) return;
 
-            var user = await _emporiaCache.GetUserAsync(notification.Listing.Owner.EmporiumId.Value, notification.Offer.UserReference.Value);
             var economy = _factory.Create(guildSettings.EconomyType);
-            var economyUser = user.ToEmporiumUser();
 
             var filter = new ShowroomFilter(notification.Listing.Owner.EmporiumId, notification.Listing.ShowroomId, notification.Listing.Type.ToString())
             {
@@ -42,16 +42,28 @@ namespace Agora.Shared.Events
 
             var showroom = await _dataAccessor.Transaction<IReadRepository<Showroom>>().SingleOrDefaultAsync(new ShowroomSpec(filter), cancellationToken);
 
-            if (showroom.Listings.FirstOrDefault()?.Product is not AuctionItem auction || auction.Offers.Count <= 1) return;
-
-            var previousBid = auction.Offers.OrderByDescending(x => x.SubmittedOn).First(x => x.SubmittedOn < notification.Offer.SubmittedOn);
-
-            user = await _emporiaCache.GetUserAsync(notification.Listing.Owner.EmporiumId.Value, previousBid.UserReference.Value);
-
-            await economy.IncreaseBalanceAsync(user.ToEmporiumUser(), previousBid.Amount, $"Bid returned for {notification.Listing.Product.Quantity} {notification.Listing.Product.Title}");
-
+            if (showroom.Listings.FirstOrDefault()?.Product is AuctionItem auction && auction.Offers.Count > 1) 
+                await ReturnPreviousBidAsync(notification, auction, economy);
+            else if (showroom.Listings.FirstOrDefault()?.Product is MarketItem market)
+                await PartialPurchaseAsync(notification, market, economy);
 
             return;
+        }
+
+        private async Task PartialPurchaseAsync(OfferAddedNotification notification, MarketItem market, IEconomy economy)
+        {
+            if (notification.Offer is not Payment payment) return;
+
+            await economy.IncreaseBalanceAsync(notification.Listing.Owner, payment.Amount, $"Partial purchase of {notification.Listing.Product.Quantity} {notification.Listing.Product.Title}");
+        }
+
+        private async Task ReturnPreviousBidAsync(OfferAddedNotification notification, AuctionItem auction, IEconomy economy)
+        {
+            var previousBid = auction.Offers.OrderByDescending(x => x.SubmittedOn).First(x => x.SubmittedOn < notification.Offer.SubmittedOn);
+
+            var user = await _emporiaCache.GetUserAsync(notification.Listing.Owner.EmporiumId.Value, previousBid.UserReference.Value);
+
+            await economy.IncreaseBalanceAsync(user.ToEmporiumUser(), previousBid.Amount, $"Bid returned for {notification.Listing.Product.Quantity} {notification.Listing.Product.Title}");
         }
     }
 }
