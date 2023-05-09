@@ -39,6 +39,10 @@ namespace Agora.Shared.Events
             {
                 await economy.DecreaseBalanceAsync(economyUser, bid.Amount, $"Submitted bid for {notification.Listing.Product.Quantity} {notification.Listing.Product.Title}");
             }
+            else if (notification.Listing is CommissionTrade trade)
+            {
+                await economy.DecreaseBalanceAsync(notification.Listing.Owner, trade.Commission, $"Paid a commission for {trade.Product.Title}");
+            }
 
             return;
         }
