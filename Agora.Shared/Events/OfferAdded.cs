@@ -30,7 +30,6 @@ namespace Agora.Shared.Events
 
             if (guildSettings.EconomyType == "Disabled") return;
             if (notification.Listing is VickreyAuction) return;
-            if (notification.Listing.Product is TradeItem) return;
             if (notification.Listing.Product is MarketItem && notification.Listing.Status >= ListingStatus.Withdrawn) return;
 
             var economy = _factory.Create(guildSettings.EconomyType);
@@ -46,8 +45,16 @@ namespace Agora.Shared.Events
                 await ReturnPreviousBidAsync(notification, auction, economy);
             else if (showroom.Listings.FirstOrDefault()?.Product is MarketItem market)
                 await PartialPurchaseAsync(notification, market, economy);
-
+            else if (notification.Listing is CommissionTrade trade)
+                await SellItemAsync(notification, trade, economy);
             return;
+        }
+
+        private async Task SellItemAsync(OfferAddedNotification notification, CommissionTrade trade, IEconomy economy)
+        {
+            var user = await _emporiaCache.GetUserAsync(notification.Listing.Owner.EmporiumId.Value, notification.Offer.UserReference.Value);
+
+            await economy.IncreaseBalanceAsync(user.ToEmporiumUser(), trade.Commission, $"Commission for {trade.Product.Title}");
         }
 
         private async Task PartialPurchaseAsync(OfferAddedNotification notification, MarketItem market, IEconomy economy)
