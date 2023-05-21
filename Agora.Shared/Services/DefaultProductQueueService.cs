@@ -87,7 +87,7 @@ namespace Agora.Shared.Services
                                     _ => null
                                 };
 
-                                _logger.LogTrace("[{commandId}] | Update current offer {offer} -> {update}", requestId, listing.CurrentOffer?.Submission, offer.Submission);
+                                _logger.LogTrace("[{commandId}] | Update current offer {offer} -> {update}", requestId, listing.CurrentOffer?.Submission, offer?.Submission);
 
                                 listing.UpdateCurrentOffer(offer);
                             }
