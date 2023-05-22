@@ -36,13 +36,11 @@ namespace Agora.Shared.Events
             if (notification.Offer is Payment payment)
                 await economy.DecreaseBalanceAsync(economyUser, payment.Amount, $"Purchased {payment.ItemCount} {notification.Listing.Product.Title}");
             else if (notification.Offer is Bid bid)
-            {
                 await economy.DecreaseBalanceAsync(economyUser, bid.Amount, $"Submitted bid for {notification.Listing.Product.Quantity} {notification.Listing.Product.Title}");
-            }
             else if (notification.Listing is CommissionTrade trade)
-            {
                 await economy.DecreaseBalanceAsync(notification.Listing.Owner, trade.Commission, $"Paid a commission for {trade.Product.Title}");
-            }
+            else if (notification.Listing is RaffleGiveaway raffle && raffle.Product is GiveawayItem item)
+                await economy.DecreaseBalanceAsync(economyUser, item.TicketPrice, $"Purchased raffle ticket for {raffle.Product.Title}");
 
             return;
         }

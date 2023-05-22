@@ -23,7 +23,7 @@ namespace Agora.Shared.Events
         public async Task Handle(ListingRemovedNotification notification, CancellationToken cancellationToken)
         {
             if (notification.ProductListing.Status != ListingStatus.Sold) return;
-            if (notification.ProductListing.Product is not AuctionItem and not MarketItem) return;
+            if (notification.ProductListing.Product is TradeItem) return;
 
             var guildSettings = await _guildSettingsService.GetGuildSettingsAsync(notification.ProductListing.Owner.EmporiumId.Value);
 
@@ -35,8 +35,11 @@ namespace Agora.Shared.Events
             {
                 AuctionItem auction => auction.Offers.OrderByDescending(x => x.SubmittedOn).First().Amount,
                 MarketItem market => market.Offers.OrderByDescending(x => x.SubmittedOn).First().Amount,
+                GiveawayItem giveaway => Money.Create(giveaway.Offers.Sum(x => giveaway.TicketPrice.Value), giveaway.TicketPrice.Currency),
                 _ => throw new InvalidOperationException($"Cannot increase balances for {product.GetType()}")
             };
+
+            if (submission is null) return;
 
             await economy.IncreaseBalanceAsync(notification.ProductListing.Owner, submission, $"Sale of {notification.ProductListing.Product.Title}");
 
@@ -57,7 +60,6 @@ namespace Agora.Shared.Events
 
         public async Task Handle(ListingRemovedNotification notification, CancellationToken cancellationToken)
         {
-            if (notification.ProductListing.Product is not AuctionItem item) return;
 
             var emporiumId = notification.ProductListing.Owner.EmporiumId.Value;
             var guildSettings = await _guildSettingsService.GetGuildSettingsAsync(emporiumId);
@@ -65,6 +67,43 @@ namespace Agora.Shared.Events
             if (guildSettings.EconomyType == "Disabled") return;
 
             var economy = _factory.Create(guildSettings.EconomyType);
+
+            if (notification.ProductListing.Product is AuctionItem auction)
+                await AuctionWithdrawnAsync(notification, auction, economy, cancellationToken);
+            else if (notification.ProductListing is RaffleGiveaway raffle && raffle.Product is GiveawayItem giveaway)
+                await RaffleWithdrawnAsync(raffle, giveaway, economy, cancellationToken);
+
+            return;
+        }
+
+        private static async Task RaffleWithdrawnAsync(RaffleGiveaway raffle, GiveawayItem item, IEconomy economy, CancellationToken cancellationToken)
+        {
+            var emporiumId = raffle.Owner.EmporiumId.Value;
+
+            switch (raffle.Status)
+            {
+                case ListingStatus.Withdrawn:
+                case ListingStatus.Expired:
+                    if (!item.Offers.Any()) return;
+
+                    foreach (var ticket in item.Offers)
+                    {
+                        var user = EmporiumUser.Create(new EmporiumId(emporiumId), ticket.UserId, ticket.UserReference);
+
+                        await economy.IncreaseBalanceAsync(user, item.TicketPrice, $"Ticket refunded for {item.Title} raffle");
+                        await Task.Delay(200, cancellationToken);
+                    }
+                    break;
+                case ListingStatus.Sold:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private static async Task AuctionWithdrawnAsync(ListingRemovedNotification notification, AuctionItem item, IEconomy economy, CancellationToken cancellationToken)
+        {
+            var emporiumId = notification.ProductListing.Owner.EmporiumId.Value;
 
             switch (notification.ProductListing.Status)
             {
@@ -114,8 +153,6 @@ namespace Agora.Shared.Events
                 default:
                     break;
             }
-
-            return;
         }
     }
 

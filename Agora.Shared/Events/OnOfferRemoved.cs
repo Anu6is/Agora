@@ -44,6 +44,10 @@ namespace Agora.Shared.Events
 
                 await economy.DecreaseBalanceAsync(user.ToEmporiumUser(), previousBid.Amount, $"Resubmitted bid for {notification.Listing.Product.Quantity} {notification.Listing.Product.Title}");
             }
+            else if (notification.Listing is RaffleGiveaway raffle && raffle.Product is GiveawayItem item)
+            {
+                await economy.IncreaseBalanceAsync(economyUser, item.TicketPrice, $"Refunded ticket purchase for {item.Title}");
+            }
 
             return;
         }
