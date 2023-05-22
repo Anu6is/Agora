@@ -35,7 +35,7 @@ namespace Agora.Shared.Events
             {
                 AuctionItem auction => auction.Offers.OrderByDescending(x => x.SubmittedOn).First().Amount,
                 MarketItem market => market.Offers.OrderByDescending(x => x.SubmittedOn).First().Amount,
-                GiveawayItem giveaway => Money.Create(giveaway.Offers.Sum(x => giveaway.TicketPrice.Value), giveaway.TicketPrice.Currency),
+                GiveawayItem giveaway => notification.ProductListing is StandardGiveaway ? null : Money.Create(giveaway.Offers.Sum(x => giveaway.TicketPrice.Value), giveaway.TicketPrice.Currency),
                 _ => throw new InvalidOperationException($"Cannot increase balances for {product.GetType()}")
             };
 
