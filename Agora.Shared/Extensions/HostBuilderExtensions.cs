@@ -99,7 +99,7 @@ namespace Agora.Shared.Extensions
             services.AddSingleton<RaidHelperClient>();
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            services.AddMediatR(x => x.AsScoped(), Assembly.GetExecutingAssembly());
+            services.AddMediatR(x => x.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
             return services;
         }
