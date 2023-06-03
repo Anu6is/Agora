@@ -42,7 +42,7 @@ namespace Agora.Shared.Extensions
                                                 Func<SentryEvent, SentryEvent> sentryCallback = null)
         {
             builder.Services.Configure<SentryLoggingOptions>(context.Configuration.GetSection("Sentry"));
-            builder.AddSentry(options => options.BeforeSend += sentryCallback);
+            builder.AddSentry(options => options.SetBeforeSend(sentryCallback));
             return builder;
         }
 

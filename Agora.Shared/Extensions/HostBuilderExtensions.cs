@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using System.Collections.Immutable;
 using System.Reflection;
 using ServiceLifetime = Agora.Shared.Attributes.AgoraServiceAttribute.ServiceLifetime;
+using Lifetime = Microsoft.Extensions.DependencyInjection.ServiceLifetime;
 
 namespace Agora.Shared.Extensions
 {
@@ -99,7 +100,7 @@ namespace Agora.Shared.Extensions
             services.AddSingleton<RaidHelperClient>();
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            services.AddMediatR(x => x.AsScoped(), Assembly.GetExecutingAssembly());
+            services.AddMediatR(x => x.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()).Lifetime = Lifetime.Scoped);
 
             return services;
         }
