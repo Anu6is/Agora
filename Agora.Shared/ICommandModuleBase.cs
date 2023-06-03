@@ -20,15 +20,9 @@ namespace Agora.Shared
         public EmporiumId EmporiumId { get; }
         public ShowroomId ShowroomId { get; }
 
-        public async Task<TResult> ExecuteAsync<TResult>(IRequest<TResult> command)
-        {
-            return await Mediator.Send(command);
-        }
+        public async Task<TResult> ExecuteAsync<TResult>(IRequest<TResult> command) => await Mediator.Send(command);
 
-        public async Task<Unit> ExecuteAsync(IRequest command)
-        {
-            return await Mediator.Send(command);
-        }
+        public async Task ExecuteAsync(IRequest command) => await Mediator.Send(command);
 
         public async Task WaitForCommandsAsync(Func<bool> condition, int waitTimeInMinutes, CancellationToken cancellationToken)
             => await WaitWhileAsync(condition, TimeSpan.FromMinutes(waitTimeInMinutes), cancellationToken);
