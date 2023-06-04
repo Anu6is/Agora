@@ -20,8 +20,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emporia.Extensions.Discord"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agora.Addons.Disqord", "..\Agora.Addons.Disqord\Agora.Addons.Disqord\Agora.Addons.Disqord.csproj", "{12073B24-BC29-409F-8A74-C6C9E8100146}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agora.Addons.Conversion", "..\Agora.Addons.Conversion\Agora.Addons.Conversion.csproj", "{A7D744B9-97C9-4DF1-9BFC-C8AACD518A8C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emporia.Processing", "..\..\Ophios\Repos\Emporia\src\Emporia.Processing\Emporia.Processing.csproj", "{E9EA9BDE-221E-490C-8787-00911B44425D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emporia.Persistence", "..\..\Ophios\Repos\Emporia\src\Emporia.Persistence\Emporia.Persistence.csproj", "{F1BF8925-F7D3-4B4B-BD71-03FD4F8B4090}"
@@ -31,6 +29,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emporia.Application", "..\..\Ophios\Repos\Emporia\src\Emporia.Application\Emporia.Application.csproj", "{6E71EA5A-49DC-4B60-8FA6-A050CE0D35D4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agora.Addons.Administration", "..\Agora.Addons.Administration\Agora.Addons.Administration.csproj", "{8830DD74-4A4B-4782-9B0D-887FDCA36044}"
+EndProject
+Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "DiscordStatus.Net", "..\DiscordStatus.Net\DiscordStatus.Net\DiscordStatus.Net.vbproj", "{C98E4E82-6396-4ED5-A64C-0499D582DC99}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,10 +62,6 @@ Global
 		{12073B24-BC29-409F-8A74-C6C9E8100146}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12073B24-BC29-409F-8A74-C6C9E8100146}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12073B24-BC29-409F-8A74-C6C9E8100146}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A7D744B9-97C9-4DF1-9BFC-C8AACD518A8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A7D744B9-97C9-4DF1-9BFC-C8AACD518A8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A7D744B9-97C9-4DF1-9BFC-C8AACD518A8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A7D744B9-97C9-4DF1-9BFC-C8AACD518A8C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E9EA9BDE-221E-490C-8787-00911B44425D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E9EA9BDE-221E-490C-8787-00911B44425D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9EA9BDE-221E-490C-8787-00911B44425D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -86,6 +82,10 @@ Global
 		{8830DD74-4A4B-4782-9B0D-887FDCA36044}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8830DD74-4A4B-4782-9B0D-887FDCA36044}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8830DD74-4A4B-4782-9B0D-887FDCA36044}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C98E4E82-6396-4ED5-A64C-0499D582DC99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C98E4E82-6396-4ED5-A64C-0499D582DC99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C98E4E82-6396-4ED5-A64C-0499D582DC99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C98E4E82-6396-4ED5-A64C-0499D582DC99}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
