@@ -98,7 +98,9 @@ namespace Agora.Shared.Events
 
                     var offers = item.Offers.OrderByDescending(x => x.SubmittedOn);
 
-                    var previousOffer = offers.Skip(1).First();
+                    if (offers.First().Amount != item.CurrentPrice) return;
+
+                        var previousOffer = offers.Skip(1).First();
                     var refundee = EmporiumUser.Create(new EmporiumId(emporiumId), previousOffer.UserId, previousOffer.UserReference);
 
                     await economy.IncreaseBalanceAsync(refundee, previousOffer.Amount, $"Offer returned for {item.Quantity} {item.Title}");
