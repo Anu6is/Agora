@@ -111,6 +111,14 @@
     {
       "Summary": "You can switch to Inline Result Logs - Logs are posted in the channel the item was listed in.",
       "Details": "</server settings:1013361602499723275> -> select Result Log -> [Inline Logs] Button"
+    },
+    {
+      "Summary": "You can modify multiple settings with a single execution of the </server settings:1013361602499723275> command.",
+      "Details": "There is no need to close the menu and execute the command multiple times"
+    },
+    {
+      "Summary": "You can show your support by making a [donation](https://www.buymeacoffee.com/Anu6is) to the developer.",
+      "Details": "Step up your game and sign up for a membership [subscription](https://www.buymeacoffee.com/Anu6is/membership)"
     }
   ]
 }

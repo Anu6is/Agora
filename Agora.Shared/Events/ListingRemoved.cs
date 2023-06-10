@@ -69,14 +69,46 @@ namespace Agora.Shared.Events
             var economy = _factory.Create(guildSettings.EconomyType);
 
             if (notification.ProductListing.Product is AuctionItem auction)
-                await AuctionWithdrawnAsync(notification, auction, economy, cancellationToken);
+                await AuctionRemovedAsync(notification, auction, economy, cancellationToken);
             else if (notification.ProductListing is RaffleGiveaway raffle && raffle.Product is GiveawayItem giveaway)
-                await RaffleWithdrawnAsync(raffle, giveaway, economy, cancellationToken);
+                await RaffleRemovedAsync(raffle, giveaway, economy, cancellationToken);
+            else if (notification.ProductListing is StandardMarket { AllowOffers: true } market)
+                await MarketItemRemovedAsync(notification, (MarketItem)market.Product, economy, cancellationToken);
 
             return;
         }
 
-        private static async Task RaffleWithdrawnAsync(RaffleGiveaway raffle, GiveawayItem item, IEconomy economy, CancellationToken cancellationToken)
+        private static async Task MarketItemRemovedAsync(ListingRemovedNotification notification, MarketItem item, IEconomy economy, CancellationToken cancellationToken)
+        {
+            var emporiumId = notification.ProductListing.Owner.EmporiumId.Value;
+
+            switch (notification.ProductListing.Status)
+            {
+                case ListingStatus.Withdrawn:
+                case ListingStatus.Expired:
+                    if (!item.Offers.Any()) return;
+
+                    var payment = item.Offers.OrderBy(x => x.SubmittedOn).Last();
+                    var user = EmporiumUser.Create(new EmporiumId(emporiumId), payment.UserId, payment.UserReference);
+
+                    await economy.IncreaseBalanceAsync(user, payment.Amount, $"Offer returned for {item.Quantity} {item.Title}");
+                    break;
+                case ListingStatus.Sold:
+                    if (item.Offers.Count <= 1) return;
+
+                    var offers = item.Offers.OrderByDescending(x => x.SubmittedOn);
+
+                    var previousOffer = offers.Skip(1).First();
+                    var refundee = EmporiumUser.Create(new EmporiumId(emporiumId), previousOffer.UserId, previousOffer.UserReference);
+
+                    await economy.IncreaseBalanceAsync(refundee, previousOffer.Amount, $"Offer returned for {item.Quantity} {item.Title}");
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private static async Task RaffleRemovedAsync(RaffleGiveaway raffle, GiveawayItem item, IEconomy economy, CancellationToken cancellationToken)
         {
             var emporiumId = raffle.Owner.EmporiumId.Value;
 
@@ -101,7 +133,7 @@ namespace Agora.Shared.Events
             }
         }
 
-        private static async Task AuctionWithdrawnAsync(ListingRemovedNotification notification, AuctionItem item, IEconomy economy, CancellationToken cancellationToken)
+        private static async Task AuctionRemovedAsync(ListingRemovedNotification notification, AuctionItem item, IEconomy economy, CancellationToken cancellationToken)
         {
             var emporiumId = notification.ProductListing.Owner.EmporiumId.Value;
 
