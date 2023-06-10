@@ -48,6 +48,21 @@ namespace Agora.Shared.Events
             {
                 await economy.IncreaseBalanceAsync(economyUser, item.TicketPrice, $"Refunded ticket purchase for {item.Title}");
             }
+            else if (notification.Offer is Payment payment && payment.Amount < (notification.Listing.Product as MarketItem).CurrentPrice)
+            {
+                if (notification.Listing is not StandardMarket market || !market.AllowOffers) return;
+                
+                await economy.IncreaseBalanceAsync(economyUser, payment.Amount, $"Cancel offer made for {notification.Listing.Product.Quantity} {notification.Listing.Product.Title}");
+
+                var marketItem = notification.Listing.Product as MarketItem;
+
+                if (marketItem.Offers.Count == 0) return;
+
+                var previousOffer = marketItem.Offers.OrderByDescending(x => x.SubmittedOn).First();
+                user = await _emporiaCache.GetUserAsync(notification.Listing.Owner.EmporiumId.Value, previousOffer.UserReference.Value);
+
+                await economy.DecreaseBalanceAsync(user.ToEmporiumUser(), previousOffer.Amount, $"Resubmitted offer for {notification.Listing.Product.Quantity} {notification.Listing.Product.Title}");
+            }
 
             return;
         }

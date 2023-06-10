@@ -30,7 +30,7 @@ namespace Agora.Shared.Events
 
             if (guildSettings.EconomyType == "Disabled") return;
             if (notification.Listing is VickreyAuction) return;
-            if (notification.Listing.Product is MarketItem && notification.Listing.Status >= ListingStatus.Withdrawn) return;
+            if (notification.Listing is FlashMarket) return;
 
             var economy = _factory.Create(guildSettings.EconomyType);
 
@@ -40,11 +40,14 @@ namespace Agora.Shared.Events
             };
 
             var showroom = await _dataAccessor.Transaction<IReadRepository<Showroom>>().SingleOrDefaultAsync(new ShowroomSpec(filter), cancellationToken);
+            var listing = showroom.Listings.FirstOrDefault();
 
-            if (showroom.Listings.FirstOrDefault()?.Product is AuctionItem auction && auction.Offers.Count > 1) 
+            if (listing?.Product is AuctionItem auction && auction.Offers.Count > 1) 
                 await ReturnPreviousBidAsync(notification, auction, economy);
-            else if (showroom.Listings.FirstOrDefault()?.Product is MarketItem market)
-                await PartialPurchaseAsync(notification, market, economy);
+            if (listing is StandardMarket { AllowOffers: true })
+                await ReturnPreviousOfferAsync(listing.Owner.EmporiumId, (MarketItem)listing.Product, economy);
+            else if (listing is MassMarket or MultiItemMarket)
+                await PartialPurchaseAsync(notification, (MarketItem)listing.Product, economy);
             else if (notification.Listing is CommissionTrade trade)
                 await SellItemAsync(notification, trade, economy);
             return;
@@ -57,8 +60,21 @@ namespace Agora.Shared.Events
             await economy.IncreaseBalanceAsync(user.ToEmporiumUser(), trade.Commission, $"Commission for {trade.Product.Title}");
         }
 
+        private async Task ReturnPreviousOfferAsync(EmporiumId emporiumId, MarketItem item, IEconomy economy)
+        {
+            if (item.Offers.Count <= 1) return;
+
+            var offers = item.Offers.OrderByDescending(x => x.SubmittedOn);
+
+            var previousOffer = offers.Skip(1).First();
+            var refundee = await _emporiaCache.GetUserAsync(emporiumId.Value, previousOffer.UserReference.Value);
+
+            await economy.IncreaseBalanceAsync(refundee.ToEmporiumUser(), previousOffer.Amount, $"Offer returned for {item.Quantity} {item.Title}");
+        }
+
         private async Task PartialPurchaseAsync(OfferAddedNotification notification, MarketItem market, IEconomy economy)
         {
+            if (notification.Listing.Status >= ListingStatus.Withdrawn) return;
             if (notification.Offer is not Payment payment) return;
 
             await economy.IncreaseBalanceAsync(notification.Listing.Owner, payment.Amount, $"Partial purchase of {notification.Listing.Product.Quantity} {notification.Listing.Product.Title}");
