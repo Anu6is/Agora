@@ -30,6 +30,7 @@ namespace Agora.Shared.Cache
         public void Clear(ulong guildId)
         {
             _settingsCache.Remove($"settings:{guildId}");
+            _settingsCache.Remove($"required:{guildId}:{ListingType.Giveaway}");
             _settingsCache.Remove($"required:{guildId}:{ListingType.Auction}");
             _settingsCache.Remove($"required:{guildId}:{ListingType.Market}");
             _settingsCache.Remove($"required:{guildId}:{ListingType.Trade}");
@@ -60,6 +61,21 @@ namespace Agora.Shared.Cache
                                using var scope = _scopeFactory.CreateScope();
                                var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
                                var result = await mediator.Send(new GetGuildSettingsDetailsQuery(guildId), cts);
+
+                               //TODO update flags
+                               var settings = result.Data;
+
+                               if (settings is null || settings.Flags is not null) return settings;
+
+                               var features = new SettingsFeatures(settings.Flags);
+
+                               if (settings.AllowShillBidding) features.AddFlag(SettingsFlags.ShillBidding);
+                               if (settings.AllowListingRecall) features.AddFlag(SettingsFlags.RecallListings);
+                               if (settings.AllowAcceptingOffer) features.AddFlag(SettingsFlags.AcceptOffers);
+                               if (settings.TransactionConfirmation) features.AddFlag(SettingsFlags.ConfirmTransactions);
+
+                               settings.Flags = features.RawValue;
+                               //Update flags
 
                                return result.Data;
                            },
