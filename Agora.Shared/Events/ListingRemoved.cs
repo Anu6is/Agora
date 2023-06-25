@@ -205,8 +205,14 @@ namespace Agora.Shared.Events
 
         public async Task Handle(ListingRemovedNotification notification, CancellationToken cancellationToken)
         {
-            if (!notification.ProductListing.IsScheduled) return;
+            if (notification.ProductListing.ReschedulingChoice == RescheduleOption.Never) return;
             if (notification.ProductListing.Status == ListingStatus.Withdrawn) return;
+
+            var status = notification.ProductListing.Status;
+            var choice = notification.ProductListing.ReschedulingChoice;
+
+            if (status == ListingStatus.Expired && choice == RescheduleOption.Sold) return;
+            if (status == ListingStatus.Sold && choice == RescheduleOption.Expired) return;
 
             _userService.CurrentUser = notification.ProductListing.Owner;
 
