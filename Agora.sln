@@ -30,6 +30,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Emporia.Application", "..\.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agora.Addons.Administration", "..\Agora.Addons.Administration\Agora.Addons.Administration.csproj", "{8830DD74-4A4B-4782-9B0D-887FDCA36044}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Agora.API", "Agora.API\Agora.API.csproj", "{EFA234F0-627A-46E7-8FAE-F9BF8435E0B7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -80,6 +82,10 @@ Global
 		{8830DD74-4A4B-4782-9B0D-887FDCA36044}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8830DD74-4A4B-4782-9B0D-887FDCA36044}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8830DD74-4A4B-4782-9B0D-887FDCA36044}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFA234F0-627A-46E7-8FAE-F9BF8435E0B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFA234F0-627A-46E7-8FAE-F9BF8435E0B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFA234F0-627A-46E7-8FAE-F9BF8435E0B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFA234F0-627A-46E7-8FAE-F9BF8435E0B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
