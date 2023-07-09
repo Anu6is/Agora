@@ -62,21 +62,6 @@ namespace Agora.Shared.Cache
                                var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
                                var result = await mediator.Send(new GetGuildSettingsDetailsQuery(guildId), cts);
 
-                               //TODO update flags
-                               var settings = result.Data;
-
-                               if (settings is null || settings.Flags is not null) return settings;
-
-                               var features = new SettingsFeatures(settings.Flags);
-
-                               if (settings.AllowShillBidding) features.AddFlag(SettingsFlags.ShillBidding);
-                               if (settings.AllowListingRecall) features.AddFlag(SettingsFlags.RecallListings);
-                               if (settings.AllowAcceptingOffer) features.AddFlag(SettingsFlags.AcceptOffers);
-                               if (settings.TransactionConfirmation) features.AddFlag(SettingsFlags.ConfirmTransactions);
-
-                               settings.Flags = features.RawValue;
-                               //Update flags
-
                                return result.Data;
                            },
                            TimeSpan.FromMinutes(CacheExpirationInMinutes),
