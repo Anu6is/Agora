@@ -110,11 +110,15 @@ namespace Agora.Shared.Cache
                     if (result.Data == null)
                     {
                         var newUser = await mediator.Send(new CreateEmporiumUserCommand(new EmporiumId(guildId), ReferenceNumber.Create(userId)), cts);
+
+                        if (!newUser.IsSuccessful) return null;
+
+                        var user = newUser.Data;
                         var userDetails = new CachedEmporiumUser()
                         {
-                            UserId = newUser.Id.Value,
-                            EmporiumId = newUser.EmporiumId.Value,
-                            ReferenceNumber = newUser.ReferenceNumber.Value
+                            UserId = user.Id.Value,
+                            EmporiumId = user.EmporiumId.Value,
+                            ReferenceNumber = user.ReferenceNumber.Value
                         };
 
                         return userDetails;

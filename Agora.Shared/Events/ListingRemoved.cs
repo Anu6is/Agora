@@ -4,6 +4,7 @@ using Emporia.Application.Features.Commands;
 using Emporia.Domain.Common;
 using Emporia.Domain.Entities;
 using Emporia.Domain.Events;
+using Emporia.Domain.Services;
 using Emporia.Extensions.Discord;
 using MediatR;
 
@@ -224,9 +225,9 @@ namespace Agora.Shared.Events
 
     internal class ListingRemovedQueue : INotificationHandler<ListingRemovedNotification>
     {
-        private readonly IProductQueueService<Command<Listing>, Listing> _queueService;
+        private readonly IProductQueueService<Command<IResult<Listing>>, IResult<Listing>> _queueService;
 
-        public ListingRemovedQueue(IProductQueueService<Command<Listing>, Listing> productQueueService)
+        public ListingRemovedQueue(IProductQueueService<Command<IResult<Listing>>, IResult<Listing>> productQueueService)
         {
             _queueService = productQueueService;
         }

@@ -87,7 +87,13 @@ namespace Agora.Shared.Cache
                                var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
                                var result = await mediator.Send(new GetListingRequirementDetailsQuery(guildId, listingType), cts);
 
-                               return result.Data ?? await mediator.Send(new CreateListingRequirementsCommand(guildId, listingType), cts);
+                               if (result.Data is not null) return result.Data;
+                                   
+                               var requirements =  await mediator.Send(new CreateListingRequirementsCommand(guildId, listingType), cts);
+
+                               if (requirements.IsSuccessful) return requirements.Data;
+
+                               return DefaultListingRequirements.Create(guildId, listingType);
                            },
                            TimeSpan.FromMinutes(CacheExpirationInMinutes),
                            Tokens[guildId].Token);
