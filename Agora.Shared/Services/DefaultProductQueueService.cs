@@ -81,6 +81,7 @@ namespace Agora.Shared.Services
 
                                 Offer offer = showroom.Listings.First().Product switch
                                 {
+                                    GiveawayItem giveaway => giveaway.Offers.OrderByDescending(x => x.SubmittedOn).First(),
                                     AuctionItem auction => auction.Offers.OrderByDescending(x => x.SubmittedOn).First(),
                                     MarketItem market => market.Offers.OrderByDescending(x => x.SubmittedOn).First(),
                                     TradeItem trade => trade.Offers.OrderByDescending(x => x.SubmittedOn).First(),
