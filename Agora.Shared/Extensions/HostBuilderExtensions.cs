@@ -3,14 +3,13 @@ using Agora.Shared.EconomyFactory;
 using Agora.Shared.Services;
 using Believe.Net;
 using Emporia.Application.Common;
-using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Collections.Immutable;
 using System.Reflection;
-using ServiceLifetime = Agora.Shared.Attributes.AgoraServiceAttribute.ServiceLifetime;
 using Lifetime = Microsoft.Extensions.DependencyInjection.ServiceLifetime;
+using ServiceLifetime = Agora.Shared.Attributes.AgoraServiceAttribute.ServiceLifetime;
 
 namespace Agora.Shared.Extensions
 {
