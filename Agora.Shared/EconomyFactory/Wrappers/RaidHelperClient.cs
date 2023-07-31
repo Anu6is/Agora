@@ -1,7 +1,7 @@
 ﻿using Agora.Shared.Attributes;
 using Agora.Shared.Services;
+using Emporia.Domain.Services;
 using Emporia.Extensions.Discord;
-using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Text;
@@ -29,12 +29,12 @@ namespace Agora.Shared.EconomyFactory
             _configuration = configuration;
         }
 
-        public async Task<RaidHelperResponse> GetUserBalanceAsync(ulong guildId, ulong userId)
+        public async Task<IResult<RaidHelperResponse>> GetUserBalanceAsync(ulong guildId, ulong userId)
         {
             return await SendRequestAsync(HttpMethod.Get, guildId.ToString(), userId.ToString());
         }
 
-        public async Task<RaidHelperResponse> SetUserBalanceAsync(ulong guildId, ulong userId, decimal value, string reason = null)
+        public async Task<IResult<RaidHelperResponse>> SetUserBalanceAsync(ulong guildId, ulong userId, decimal value, string reason = null)
         {
             return await SendRequestAsync(HttpMethod.Patch, guildId.ToString(), userId.ToString(), new
             {
@@ -44,7 +44,7 @@ namespace Agora.Shared.EconomyFactory
             });
         }
 
-        public async Task<RaidHelperResponse> IncreaseUserBalanceAsync(ulong guildId, ulong userId, decimal value, string reason = null)
+        public async Task<IResult<RaidHelperResponse>> IncreaseUserBalanceAsync(ulong guildId, ulong userId, decimal value, string reason = null)
         {
             return await SendRequestAsync(HttpMethod.Patch, guildId.ToString(), userId.ToString(), new
             {
@@ -54,7 +54,7 @@ namespace Agora.Shared.EconomyFactory
             });
         }
 
-        public async Task<RaidHelperResponse> DecreaseUserBalanceAsync(ulong guildId, ulong userId, decimal value, string reason = null)
+        public async Task<IResult<RaidHelperResponse>> DecreaseUserBalanceAsync(ulong guildId, ulong userId, decimal value, string reason = null)
         {
             return await SendRequestAsync(HttpMethod.Patch, guildId.ToString(), userId.ToString(), new
             {
@@ -64,12 +64,12 @@ namespace Agora.Shared.EconomyFactory
             });
         }
 
-        private async Task<RaidHelperResponse> SendRequestAsync(HttpMethod method, string serverId, string userId, object requestBody = null)
+        private async Task<IResult<RaidHelperResponse>> SendRequestAsync(HttpMethod method, string serverId, string userId, object requestBody = null)
         {
             var settings = await _settingsService.GetGuildSettingsAsync(ulong.Parse(serverId));
 
             if (!settings.ExternalApiKeys.TryGetValue(serverId, out var apiKey))
-                throw new UnauthorizedAccessException("Auction Bot needs to be authorized to use Raid-Helper DKP in this server!");
+                Result<RaidHelperResponse>.Failure("Auction Bot needs to be authorized to use Raid-Helper DKP in this server!");
 
             var url = _configuration[$"Url:{RaidHelperClient.SectionName}"];
 
@@ -85,11 +85,11 @@ namespace Agora.Shared.EconomyFactory
             var response = await httpClient.SendAsync(request);
 
             if (!response.IsSuccessStatusCode)
-                throw new ValidationException($"Failed to process DKP request: {response.ReasonPhrase}");
+                Result<RaidHelperResponse>.Failure($"Failed to process DKP request: {response.ReasonPhrase}");
 
             var responseContent = await response.Content.ReadAsStringAsync();
 
-            return JsonSerializer.Deserialize<ResponseList>(responseContent).Results.First();
+            return Result.Success(JsonSerializer.Deserialize<ResponseList>(responseContent).Results.First());
         }
     }
 

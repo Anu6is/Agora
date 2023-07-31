@@ -1,6 +1,6 @@
 ﻿using Agora.Shared.Attributes;
 using Emporia.Domain.Common;
-using FluentValidation;
+using Emporia.Domain.Services;
 using Microsoft.Extensions.Logging;
 
 namespace Agora.Shared.EconomyFactory
@@ -15,40 +15,46 @@ namespace Agora.Shared.EconomyFactory
             _raidHelperClient = client;
         }
 
-        public override async ValueTask<Money> GetBalanceAsync(IEmporiumUser user, Currency currency)
+        public override async ValueTask<IResult<Money>> GetBalanceAsync(IEmporiumUser user, Currency currency)
         {
-            var entity = await _raidHelperClient.GetUserBalanceAsync(user.EmporiumId.Value, user.ReferenceNumber.Value)
-                ?? throw new ValidationException("Unable to verify DKP balance");
+            var entity = await _raidHelperClient.GetUserBalanceAsync(user.EmporiumId.Value, user.ReferenceNumber.Value);
 
-            _ = decimal.TryParse(entity.Dkp, out var dkp);
+            if (!entity.IsSuccessful) return Result<Money>.Failure("Unable to verify DKP balance");
 
-            return Money.Create(dkp, currency);
+            _ = decimal.TryParse(entity.Data.Dkp, out var dkp);
+
+            return Result.Success(Money.Create(dkp, currency));
         }
 
-        public override async ValueTask<Money> IncreaseBalanceAsync(IEmporiumUser user, Money amount, string reason = "")
+        public override async ValueTask<IResult<Money>> IncreaseBalanceAsync(IEmporiumUser user, Money amount, string reason = "")
         {
-            var entity = await _raidHelperClient.IncreaseUserBalanceAsync(user.EmporiumId.Value, user.ReferenceNumber.Value, amount.Value, reason)
-                ?? throw new ValidationException("Failed to increase DKP balance");
+            var entity = await _raidHelperClient.IncreaseUserBalanceAsync(user.EmporiumId.Value, user.ReferenceNumber.Value, amount.Value, reason);
 
-            _ = decimal.TryParse(entity.Dkp, out var dkp);
+            if (!entity.IsSuccessful) return Result<Money>.Failure("Failed to increase DKP balance");
 
-            return Money.Create(dkp, amount.Currency);
+            _ = decimal.TryParse(entity.Data.Dkp, out var dkp);
+
+            return Result.Success(Money.Create(dkp, amount.Currency));
         }
 
-        public override async ValueTask<Money> DecreaseBalanceAsync(IEmporiumUser user, Money amount, string reason = "")
+        public override async ValueTask<IResult<Money>> DecreaseBalanceAsync(IEmporiumUser user, Money amount, string reason = "")
         {
-            var entity = await _raidHelperClient.DecreaseUserBalanceAsync(user.EmporiumId.Value, user.ReferenceNumber.Value, amount.Value, reason)
-                ?? throw new ValidationException("Failed to decrease DKP balance");
+            var entity = await _raidHelperClient.DecreaseUserBalanceAsync(user.EmporiumId.Value, user.ReferenceNumber.Value, amount.Value, reason);
 
-            _ = decimal.TryParse(entity.Dkp, out var dkp);
+            if (!entity.IsSuccessful) return Result<Money>.Failure("Failed to decrease DKP balance");
 
-            return Money.Create(dkp, amount.Currency);
+            _ = decimal.TryParse(entity.Data.Dkp, out var dkp);
+
+            return Result.Success(Money.Create(dkp, amount.Currency));
         }
 
-        public override async ValueTask SetBalanceAsync(IEmporiumUser user, Money amount, string reason = "")
+        public override async ValueTask<IResult>SetBalanceAsync(IEmporiumUser user, Money amount, string reason = "")
         {
-            _ = await _raidHelperClient.SetUserBalanceAsync(user.EmporiumId.Value, user.ReferenceNumber.Value, amount.Value, reason)
-                ?? throw new ValidationException("Failed to set DKP balance");
+            var result = await _raidHelperClient.SetUserBalanceAsync(user.EmporiumId.Value, user.ReferenceNumber.Value, amount.Value, reason);
+
+            if (!result.IsSuccessful) return Result.Failure("Failed to set DKP balance");
+
+            return Result.Success();
         }
     }
 }

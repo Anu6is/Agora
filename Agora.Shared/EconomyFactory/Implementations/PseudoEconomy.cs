@@ -1,5 +1,6 @@
 ﻿using Agora.Shared.Attributes;
 using Emporia.Domain.Common;
+using Emporia.Domain.Services;
 using Microsoft.Extensions.Logging;
 
 namespace Agora.Shared.EconomyFactory
@@ -9,10 +10,10 @@ namespace Agora.Shared.EconomyFactory
     {
         public PseudoEconomy(ILogger<PseudoEconomy> logger) : base(logger) { }
 
-        public override ValueTask<Money> GetBalanceAsync(IEmporiumUser user, Currency currency) => ValueTask.FromResult(Money.Create(decimal.MaxValue, currency));
+        public override ValueTask<IResult<Money>> GetBalanceAsync(IEmporiumUser user, Currency currency) => Result.Success(Money.Create(decimal.MaxValue, currency));
 
-        public override ValueTask<Money> IncreaseBalanceAsync(IEmporiumUser user, Money amount, string reason = "") => ValueTask.FromResult(Money.Create(decimal.MaxValue, amount.Currency));
+        public override ValueTask<IResult<Money>> IncreaseBalanceAsync(IEmporiumUser user, Money amount, string reason = "") => Result.Success(Money.Create(decimal.MaxValue, amount.Currency));
 
-        public override ValueTask<Money> DecreaseBalanceAsync(IEmporiumUser user, Money amount, string reason = "") => ValueTask.FromResult(Money.Create(decimal.MaxValue, amount.Currency));
+        public override ValueTask<IResult<Money>> DecreaseBalanceAsync(IEmporiumUser user, Money amount, string reason = "") => Result.Success(Money.Create(decimal.MaxValue, amount.Currency));
     }
 }
