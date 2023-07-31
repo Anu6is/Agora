@@ -61,9 +61,11 @@ namespace Agora.Shared.Services
 
                             OnRequestProcessed(new RequestEventArgs(item.Request, result));
 
-                            await _cache.AddShowroomListingAsync(item.Request.Showroom);
-
-                            _logger.LogTrace("[{commandId}] | Cache current offer {offer}", requestId, item.Request.Showroom.Listings.FirstOrDefault()?.CurrentOffer?.Submission);
+                            if (item.Request.Showroom.Listings.Count > 0)
+                            {
+                                await _cache.AddShowroomListingAsync(item.Request.Showroom);
+                                _logger.LogTrace("[{commandId}] | Cache current offer {offer}", requestId, item.Request.Showroom.Listings.FirstOrDefault()?.CurrentOffer?.Submission);
+                            }
 
                             await Task.Delay(500);
                         }
