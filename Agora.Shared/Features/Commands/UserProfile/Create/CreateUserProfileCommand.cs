@@ -1,10 +1,11 @@
 ﻿using Agora.Shared.Persistence.Models;
 using Emporia.Application.Common;
 using Emporia.Domain.Common;
+using Emporia.Domain.Services;
 
 namespace Agora.Shared.Features.Commands
 {
-    public class CreateUserProfileCommand : Command<UserProfile>
+    public class CreateUserProfileCommand : Command<IResult<UserProfile>>
     {
         public UserId UserId { get; init; }
         public EmporiumId EmporiumId { get; init; }

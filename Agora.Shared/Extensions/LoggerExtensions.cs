@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
 using Sentry;
 using Sentry.Extensions.Logging;
 using Serilog;
@@ -15,7 +14,8 @@ namespace Agora.Shared.Extensions
     {
         public static ILoggingBuilder ReplaceDefaultLogger(this ILoggingBuilder builder)
         {
-            builder.Services.Remove(builder.Services.First(descriptor => descriptor.ImplementationType == typeof(ConsoleLoggerProvider)));
+            builder.ClearProviders();
+
             return builder;
         }
 
@@ -29,6 +29,7 @@ namespace Agora.Shared.Extensions
 
             builder.AddSerilog(
                 new LoggerConfiguration()
+                    .Enrich.FromLogContext()
                     .ReadFrom.Configuration(context.Configuration)
                     .MinimumLevel.ControlledBy(levelSwitcher.DefaultLevelSwitch)
                     .MinimumLevel.Override("Microsoft.EntityFrameworkCore", levelSwitcher.EntityFrameworkLevelSwitch)

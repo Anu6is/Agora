@@ -4,6 +4,7 @@ using Emporia.Application.Features.Commands;
 using Emporia.Domain.Common;
 using Emporia.Domain.Entities;
 using Emporia.Domain.Events;
+using Emporia.Domain.Services;
 using Emporia.Extensions.Discord;
 using MediatR;
 
@@ -86,7 +87,7 @@ namespace Agora.Shared.Events
             {
                 case ListingStatus.Withdrawn:
                 case ListingStatus.Expired:
-                    if (!item.Offers.Any()) return;
+                    if (item.Offers.Count == 0) return;
 
                     var payment = item.Offers.OrderBy(x => x.SubmittedOn).Last();
                     var user = EmporiumUser.Create(new EmporiumId(emporiumId), payment.UserId, payment.UserReference);
@@ -118,7 +119,7 @@ namespace Agora.Shared.Events
             {
                 case ListingStatus.Withdrawn:
                 case ListingStatus.Expired:
-                    if (!item.Offers.Any()) return;
+                    if (item.Offers.Count == 0) return;
 
                     foreach (var ticket in item.Offers)
                     {
@@ -143,7 +144,7 @@ namespace Agora.Shared.Events
             {
                 case ListingStatus.Withdrawn:
                 case ListingStatus.Expired:
-                    if (!item.Offers.Any()) return;
+                    if (item.Offers.Count == 0) return;
 
                     if (notification.ProductListing is VickreyAuction auction)
                     {
@@ -224,9 +225,9 @@ namespace Agora.Shared.Events
 
     internal class ListingRemovedQueue : INotificationHandler<ListingRemovedNotification>
     {
-        private readonly IProductQueueService<Command<Listing>, Listing> _queueService;
+        private readonly IProductQueueService<Command<IResult<Listing>>, IResult<Listing>> _queueService;
 
-        public ListingRemovedQueue(IProductQueueService<Command<Listing>, Listing> productQueueService)
+        public ListingRemovedQueue(IProductQueueService<Command<IResult<Listing>>, IResult<Listing>> productQueueService)
         {
             _queueService = productQueueService;
         }
