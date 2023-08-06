@@ -161,7 +161,7 @@ namespace Agora.Shared.Cache
 
             await _emporiumCache.SetAsync($"listing:{showroom.Listings.First().Id.Value}",
                                                      showroom,
-                                                     TimeSpan.FromMinutes(LongCacheExpirationInMinutes),
+                                                     TimeSpan.FromMinutes(ShortCacheExpirtionInMinutes),
                                                      Tokens[showroom.EmporiumId.Value].Token);
             return;
         }
