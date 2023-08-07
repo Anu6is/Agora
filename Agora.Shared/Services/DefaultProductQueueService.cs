@@ -51,14 +51,14 @@ namespace Agora.Shared.Services
                     {
                         var cache = await RefreshProductAsync(item.Request.Showroom);
 
-                        if (cache is not null && cache.Listings.Count != 0 && cache.Listings.First().CurrentOffer is not null)
+                        if (cache is not null && cache.Listings.Count != 0 && cache.Listings.FirstOrDefault()?.CurrentOffer is not null)
                         {
                             Offer offer = cache.Listings.First().Product switch
                             {
-                                GiveawayItem giveaway => giveaway.Offers.OrderByDescending(x => x.SubmittedOn).First(),
-                                AuctionItem auction => auction.Offers.OrderByDescending(x => x.SubmittedOn).First(),
-                                MarketItem market => market.Offers.OrderByDescending(x => x.SubmittedOn).First(),
-                                TradeItem trade => trade.Offers.OrderByDescending(x => x.SubmittedOn).First(),
+                                GiveawayItem giveaway => giveaway.Offers.OrderByDescending(x => x.SubmittedOn).FirstOrDefault(),
+                                AuctionItem auction => auction.Offers.OrderByDescending(x => x.SubmittedOn).FirstOrDefault(),
+                                MarketItem market => market.Offers.OrderByDescending(x => x.SubmittedOn).FirstOrDefault(),
+                                TradeItem trade => trade.Offers.OrderByDescending(x => x.SubmittedOn).FirstOrDefault(),
                                 _ => null
                             };
 
