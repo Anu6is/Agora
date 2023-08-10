@@ -49,6 +49,15 @@ namespace Agora.Shared.Services
 
                     try
                     {
+                        var listing = item.Request.Showroom?.Listings?.FirstOrDefault();
+
+                        if (listing is not null && await _cache.GetProcessingItemAsync(listing) is not null)
+                        {
+                             
+                            OnRequestProcessed(new RequestEventArgs(item.Request, Result.Failure<TResponse>("Listing is no longer available")));
+                            continue;
+                        }
+
                         var cache = await RefreshProductAsync(item.Request.Showroom);
 
                         if (cache is not null && cache.Listings.Count != 0 && cache.Listings.FirstOrDefault()?.CurrentOffer is not null)
@@ -96,6 +105,8 @@ namespace Agora.Shared.Services
         }
 
         protected virtual void OnRequestProcessed(RequestEventArgs args) => RequestProcessed?.Invoke(args);
+
+        public async Task PlaceOnHoldAsync(Listing listing) => await _cache.AddProcessingItemAsync(listing);
 
         public async Task<Showroom> RefreshProductAsync(Showroom showroom)
         {

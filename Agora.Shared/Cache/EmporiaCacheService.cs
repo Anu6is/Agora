@@ -177,5 +177,24 @@ namespace Agora.Shared.Cache
                 TimeSpan.FromMinutes(ShortCacheExpirtionInMinutes),
                 Tokens[showroom.EmporiumId.Value].Token);
         }
+
+        public async ValueTask AddProcessingItemAsync(Listing listing)
+        {
+            if (!Tokens.ContainsKey(listing.Owner.EmporiumId.Value))
+                Tokens.TryAdd(listing.Owner.EmporiumId.Value, new CancellationTokenSource());
+
+            await _emporiumCache.SetAsync($"processing:{listing.Id.Value}", listing,
+                                                     TimeSpan.FromMinutes(ShortCacheExpirtionInMinutes),
+                                                     Tokens[listing.Owner.EmporiumId.Value].Token);
+            return;
+        }
+
+        public async ValueTask<Listing> GetProcessingItemAsync(Listing listing)
+        {
+            if (!Tokens.ContainsKey(listing.Owner.EmporiumId.Value))
+                Tokens.TryAdd(listing.Owner.EmporiumId.Value, new CancellationTokenSource());
+
+            return await _emporiumCache.GetOrDefaultAsync<Listing>($"processing:{listing.Id.Value}", token: Tokens[listing.Owner.EmporiumId.Value].Token);
+        }
     }
 }
