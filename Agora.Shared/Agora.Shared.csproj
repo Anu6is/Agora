@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Ophios\Repos\Emporia.Extensions.Discord\src\Emporia.Extensions.Discord.csproj" />
+    <ProjectReference Include="..\..\..\Ophois\Emporia.Extensions.Discord\src\Emporia.Extensions.Discord.csproj" />
   </ItemGroup>
 
   <ItemGroup>
