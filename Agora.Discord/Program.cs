@@ -1,10 +1,9 @@
 ﻿using Agora.Addons.Disqord;
 using Emporia.Persistence.Extensions;
-using Microsoft.Extensions.Hosting;
 
 try
 {
-    using var host = Startup.CreateHostBuilder(args).Build();
+    using var host = Startup.CreateWebHost(args); 
     await host.MigrateDatabaseAsync();
     await host.RunAsync();
 }
