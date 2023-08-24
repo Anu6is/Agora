@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Ophios\Repos\Emporia\Emporia.Migrations\Emporia.Migrations.csproj" />
+    <ProjectReference Include="..\..\..\Ophois\Emporia\Emporia.Migrations\Emporia.Migrations.csproj" />
     <ProjectReference Include="..\..\Agora.Addons.Administration\Agora.Addons.Administration.csproj" />
     <ProjectReference Include="..\..\Agora.Addons.Disqord\Agora.Addons.Disqord\Agora.Addons.Disqord.csproj" />
     <ProjectReference Include="..\Agora.Shared\Agora.Shared.csproj" />

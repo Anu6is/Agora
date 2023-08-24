@@ -110,11 +110,15 @@ namespace Agora.Shared.Cache
                     if (result.Data == null)
                     {
                         var newUser = await mediator.Send(new CreateEmporiumUserCommand(new EmporiumId(guildId), ReferenceNumber.Create(userId)), cts);
+
+                        if (!newUser.IsSuccessful) return null;
+
+                        var user = newUser.Data;
                         var userDetails = new CachedEmporiumUser()
                         {
-                            UserId = newUser.Id.Value,
-                            EmporiumId = newUser.EmporiumId.Value,
-                            ReferenceNumber = newUser.ReferenceNumber.Value
+                            UserId = user.Id.Value,
+                            EmporiumId = user.EmporiumId.Value,
+                            ReferenceNumber = user.ReferenceNumber.Value
                         };
 
                         return userDetails;
@@ -157,7 +161,7 @@ namespace Agora.Shared.Cache
 
             await _emporiumCache.SetAsync($"listing:{showroom.Listings.First().Id.Value}",
                                                      showroom,
-                                                     TimeSpan.FromMinutes(LongCacheExpirationInMinutes),
+                                                     TimeSpan.FromMinutes(ShortCacheExpirtionInMinutes),
                                                      Tokens[showroom.EmporiumId.Value].Token);
             return;
         }
@@ -172,6 +176,25 @@ namespace Agora.Shared.Cache
                 showroom,
                 TimeSpan.FromMinutes(ShortCacheExpirtionInMinutes),
                 Tokens[showroom.EmporiumId.Value].Token);
+        }
+
+        public async ValueTask AddProcessingItemAsync(Listing listing)
+        {
+            if (!Tokens.ContainsKey(listing.Owner.EmporiumId.Value))
+                Tokens.TryAdd(listing.Owner.EmporiumId.Value, new CancellationTokenSource());
+
+            await _emporiumCache.SetAsync($"processing:{listing.Id.Value}", listing,
+                                                     TimeSpan.FromMinutes(ShortCacheExpirtionInMinutes),
+                                                     Tokens[listing.Owner.EmporiumId.Value].Token);
+            return;
+        }
+
+        public async ValueTask<Listing> GetProcessingItemAsync(Listing listing)
+        {
+            if (!Tokens.ContainsKey(listing.Owner.EmporiumId.Value))
+                Tokens.TryAdd(listing.Owner.EmporiumId.Value, new CancellationTokenSource());
+
+            return await _emporiumCache.GetOrDefaultAsync<Listing>($"processing:{listing.Id.Value}", token: Tokens[listing.Owner.EmporiumId.Value].Token);
         }
     }
 }

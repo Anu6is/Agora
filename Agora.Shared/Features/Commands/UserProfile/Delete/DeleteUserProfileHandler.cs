@@ -1,11 +1,12 @@
 ﻿using Agora.Shared.Persistence.Models;
 using Emporia.Application.Common;
+using Emporia.Domain.Services;
 using Emporia.Persistence.DataAccess;
 using MediatR;
 
 namespace Agora.Shared.Features.Commands
 {
-    internal class DeleteUserProfileHandler : ICommandHandler<DeleteUserProfileCommand, Unit>
+    internal class DeleteUserProfileHandler : ICommandHandler<DeleteUserProfileCommand, IResult<Unit>>
     {
         private readonly IDataAccessor _dataAccessor;
 
@@ -14,11 +15,11 @@ namespace Agora.Shared.Features.Commands
             _dataAccessor = dataAccessor;
         }
 
-        public async Task<Unit> Handle(DeleteUserProfileCommand command, CancellationToken cancellationToken)
+        public async Task<IResult<Unit>> Handle(DeleteUserProfileCommand command, CancellationToken cancellationToken)
         {
             await _dataAccessor.Transaction<GenericRepository<UserProfile>>().DeleteAsync(UserProfile.Create(command.UserId), cancellationToken);
 
-            return Unit.Value;
+            return Result.Success(Unit.Value);
         }
     }
 }

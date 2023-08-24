@@ -22,7 +22,7 @@ namespace Agora.Shared.EconomyFactory
             nameof(EconomyType.AuctionBot) => _serviceProvider.GetRequiredService<AgoraEconomy>(),
             nameof(EconomyType.UnbelievaBoat) => _serviceProvider.GetRequiredService<UnbelievaBoatEconomy>(),
             nameof(EconomyType.RaidHelper) => _serviceProvider.GetRequiredService<RaidHelperEconomy>(),
-            _ => throw new NotImplementedException($"No implementation exists for {economyType}")
+            _ => throw new NotImplementedException($"{economyType} is not a supported economy interface")
         };
     }
 }

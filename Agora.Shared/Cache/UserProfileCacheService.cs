@@ -60,7 +60,9 @@ namespace Agora.Shared.Cache
                         var user = await scope.ServiceProvider.GetRequiredService<IEmporiaCacheService>().GetUserAsync(guildId, userReference);
                         var profile = await mediator.Send(new CreateUserProfileCommand(new EmporiumId(user.EmporiumId), new UserId(user.UserId), ReferenceNumber.Create(user.ReferenceNumber)), cts);
 
-                        return profile;
+                        if (!profile.IsSuccessful) return null;
+
+                        return profile.Data;
                     }
                     var data = result.Data;
 
