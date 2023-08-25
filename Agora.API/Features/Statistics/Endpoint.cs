@@ -25,10 +25,10 @@ namespace Agora.API.Features.Statistics
             var listings = await Mediator.Send(new GetTotalListingsQuery(), c);
             var showrooms = await Mediator.Send(new GetTotalShowroomsQuery(), c);
 
-            await SendAsync(new Response(BotService.GetTotalGuilds().ToMetric(),
-                                         showrooms.Data.ToMetric(),
-                                         BotService.GetTotalMembers().ToMetric(),
-                                         listings.Data.ToMetric()));
+            await SendAsync(new Response(BotService.GetTotalGuilds().ToMetric(decimals:1),
+                                         showrooms.Data.ToMetric(decimals: 1),
+                                         BotService.GetTotalMembers().ToMetric(decimals: 1),
+                                         listings.Data.ToMetric(decimals: 1)));
         }
     }
 }
