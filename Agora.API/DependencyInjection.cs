@@ -35,7 +35,8 @@ namespace Agora.API
             app.UseCors( x => x.WithOrigins(app.Configuration["Endpoints:WebApp"]!)
                                .AllowAnyHeader()
                                .AllowAnyMethod()
-                               .AllowCredentials());
+                               .AllowCredentials()
+                               .WithExposedHeaders("Access-Control-Allow-Origin"));
             app.Urls.Add(app.Configuration["Endpoints:WebApi"]!);
             app.UseAuthorization();
 
