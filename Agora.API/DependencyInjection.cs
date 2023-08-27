@@ -30,15 +30,16 @@ namespace Agora.API
         public static WebApplication ConfigureApiApplication(this WebApplication app)
         {
             app.UseAuthentication();
-            app.UseResponseCaching();
-            app.UseFastEndpoints();
-            app.UseCors( x => x.WithOrigins(app.Configuration["Endpoints:WebApp"]!)
+            app.UseCors(x => x.WithOrigins(app.Configuration["Endpoints:WebApp"]!)
                                .AllowAnyHeader()
                                .AllowAnyMethod()
                                .AllowCredentials()
-                               .WithExposedHeaders("Access-Control-Allow-Origin"));
-            app.Urls.Add(app.Configuration["Endpoints:WebApi"]!);
+                               .WithExposedHeaders("Access-Control-Allow-Origin")); 
+            app.UseResponseCaching();
+            app.UseFastEndpoints();
             app.UseAuthorization();
+            
+            app.Urls.Add(app.Configuration["Endpoints:WebApi"]!);
 
             return app;
         }
