@@ -3,7 +3,7 @@ using FastEndpoints;
 
 namespace Agora.API.Features.Shard
 {
-    public record ShardStatus(string State);
+    public record ShardStatus(int State, string Status);
 
     public class Endpoint : EndpointWithoutRequest<ShardStatus>
     {
@@ -17,8 +17,15 @@ namespace Agora.API.Features.Shard
 
         public override async Task HandleAsync(CancellationToken c)
         {
-            int index = Route<int>("index");
-            await SendAsync(new ShardStatus(BotService.GetShardState(index)));
+            var index = Route<int>("index");
+            var state = BotService.GetShardState(index);
+            var status = state == 0
+                ? "Offline"
+                : state == 4 
+                    ? "Online" 
+                    : "Connecting";
+
+            await SendAsync(new ShardStatus(state, status));
         }
     }
 }
