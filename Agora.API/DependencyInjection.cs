@@ -1,4 +1,5 @@
-﻿using FastEndpoints;
+﻿//using Agora.API.Services;
+using FastEndpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +13,7 @@ namespace Agora.API
             builder.Services.AddCors();
             builder.Services.AddFastEndpoints();
             builder.Services.AddResponseCaching();
+            //builder.Services.AddTransient<AccessTokenService>();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
                             {
