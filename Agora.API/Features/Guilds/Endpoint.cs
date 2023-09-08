@@ -1,14 +1,17 @@
-﻿//using Agora.API.PreProcessors;
-//using Agora.API.Services;
+﻿using Agora.API.Services;
+using Agora.Shared;
 using FastEndpoints;
 
 namespace Agora.API.Features.Guilds
 {
-    public record Membership(Guild[] Guilds);
+    public record GuildList(Guild[] Guilds);
     public record Guild(ulong Id, string Name, string Icon, bool Owner, ulong Permissions, string[] Features);
 
-    public class Endpoint: EndpointWithoutRequest<string>
+    public class Endpoint: EndpointWithoutRequest<IEnumerable<Guild>>
     {
+        public IDiscordBotService BotService { get; set; }
+        public DiscordApiService ApiService { get; set; }
+
         public override void Configure()
         {
             Get("/api/discord/guilds/{userId}");
@@ -17,21 +20,10 @@ namespace Agora.API.Features.Guilds
         public override async Task HandleAsync(CancellationToken c)
         {
             var userId = Route<string>("userId");
-            //var tokenService = Resolve<AccessTokenService>();
+            var userGuilds = await ApiService.GetGuildsAsync(userId!);
+            var mutualGuilds = BotService.GetMutualGuilds(userGuilds.Select(x => x.Id));
 
-            //try
-            //{
-            //    var user = await tokenService.GetUserInfoAsync(userId!);
-            //}
-            //catch (Exception ex)
-            //{
-
-            //    throw;
-            //}
-
-            //await SendAsync(new Membership());
-
-            await SendAsync(userId!);
+            await SendAsync(userGuilds.Where(guild => mutualGuilds.Contains(guild.Id)));
         }
     }
 }

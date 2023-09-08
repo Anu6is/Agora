@@ -1,4 +1,4 @@
-﻿//using Agora.API.Services;
+﻿using Agora.API.Services;
 using FastEndpoints;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -13,7 +13,8 @@ namespace Agora.API
             builder.Services.AddCors();
             builder.Services.AddFastEndpoints();
             builder.Services.AddResponseCaching();
-            //builder.Services.AddTransient<AccessTokenService>();
+            builder.Services.AddTransient<AccessTokenService>();
+            builder.Services.AddHttpClient<DiscordApiService>(client => client.BaseAddress = DiscordApiService.BaseURI);
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
                             {

@@ -1,43 +1,45 @@
-﻿//using Auth0.AuthenticationApi;
-//using Auth0.AuthenticationApi.Models;
-//using Microsoft.Extensions.Configuration;
+﻿using Auth0.AuthenticationApi;
+using Auth0.AuthenticationApi.Models;
+using Auth0.ManagementApi;
+using Microsoft.Extensions.Configuration;
+using Nito.AsyncEx;
 
-//namespace Agora.API.Services
-//{
-//    public class AccessTokenService
-//    {
-//        private readonly string _clientId;
-//        private readonly string _clientSecret;
-//        private readonly string _redirectUrl;
-//        private readonly AuthenticationApiClient _authClient;
+namespace Agora.API.Services
+{
+    public class AccessTokenService
+    {
+        private const string Provider = "oauth2|DiscordGuilds|";
+        private readonly IConfiguration _configuration;
 
-//        public AccessTokenService(IConfiguration configuration)
-//        {
-//            _authClient = new AuthenticationApiClient(configuration["Auth0:Domain"]);
-//            _clientId = configuration["Auth0:ClientId"]!;
-//            _clientSecret = configuration["Auth0:ClientSecret"]!;
-//            _redirectUrl = configuration["Auth0:RedirectUri"]!;
-//        }
+        private AsyncLazy<string> Token { get; set; }
 
-//        public async Task<string> GenerateAccessTokenAsync(string code)
-//        {
-//            var token = await _authClient.GetTokenAsync(new AuthorizationCodeTokenRequest
-//            {
-//                ClientId = _clientId,
-//                ClientSecret = _clientSecret,
-//                RedirectUri = _redirectUrl,
-//                Code = code
-//            });
-            
-//            return token.AccessToken;
-//        }
+        public AccessTokenService(IConfiguration configuration)
+        {
+            _configuration = configuration;
 
-//        public async Task<UserInfo> GetUserInfoAsync(string code)
-//        {
-//            var token = await GenerateAccessTokenAsync(code);
-//            var user = await _authClient.GetUserInfoAsync(token);
-            
-//            return user;
-//        }
-//    }
-//}
+            Token = new(async () => await GenerateAccessTokenAsync(configuration));
+        }
+
+        public async Task<string> GetDiscordTokenAsync(string id)
+        {
+            var client = new ManagementApiClient(await Token, new Uri(_configuration["Auth0:API:audience"]!));
+
+            var user = await client.Users.GetAsync($"{Provider}{id}");
+
+            return user.Identities.First().AccessToken;
+        }
+
+        private static async Task<string> GenerateAccessTokenAsync(IConfiguration configuration)
+        {
+            var client = new AuthenticationApiClient(configuration["Auth0:Domain"]);
+            var tokenResponse = await client.GetTokenAsync(new ClientCredentialsTokenRequest
+            {
+                ClientId = configuration["Auth0:API:ClientId"],
+                ClientSecret = configuration["Auth0:API:ClientSecret"],
+                Audience = configuration["Auth0:API:Audience"]
+            });
+
+            return tokenResponse.AccessToken;
+        }
+    }
+}

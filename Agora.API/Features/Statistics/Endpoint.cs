@@ -10,7 +10,7 @@ namespace Agora.API.Features.Statistics
     
     public class Endpoint : EndpointWithoutRequest<Statistics>
     {
-        public IBotStatisticsService BotService { get; set; }
+        public IDiscordBotService BotService { get; set; }
         public IMediator Mediator { get; set; }
 
         public override void Configure()

@@ -7,7 +7,7 @@ namespace Agora.API.Features.Shard
 
     public class Endpoint : EndpointWithoutRequest<ShardStatus>
     {
-        public IBotStatisticsService BotService { get; set; }
+        public IDiscordBotService BotService { get; set; }
 
         public override void Configure()
         {
