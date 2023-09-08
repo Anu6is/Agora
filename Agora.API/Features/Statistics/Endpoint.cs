@@ -6,11 +6,11 @@ using MediatR;
 
 namespace Agora.API.Features.Statistics
 {
-    public record Response(string Servers, string Showrooms, string Users, string Listings);
+    public record Statistics(string Servers, string Showrooms, string Users, string Listings);
     
-    public class Endpoint : EndpointWithoutRequest<Response>
+    public class Endpoint : EndpointWithoutRequest<Statistics>
     {
-        public IBotStatisticsService BotService { get; set; }
+        public IDiscordBotService BotService { get; set; }
         public IMediator Mediator { get; set; }
 
         public override void Configure()
@@ -25,7 +25,7 @@ namespace Agora.API.Features.Statistics
             var listings = await Mediator.Send(new GetTotalListingsQuery(), c);
             var showrooms = await Mediator.Send(new GetTotalShowroomsQuery(), c);
 
-            await SendAsync(new Response(BotService.GetTotalGuilds().ToMetric(decimals:1),
+            await SendAsync(new Statistics(BotService.GetTotalGuilds().ToMetric(decimals:1),
                                          showrooms.Data.ToMetric(decimals: 1),
                                          BotService.GetTotalMembers().ToMetric(decimals: 1),
                                          listings.Data.ToMetric(decimals: 1)));
