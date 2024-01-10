@@ -69,7 +69,7 @@ namespace Agora.Shared.EconomyFactory
             var settings = await _settingsService.GetGuildSettingsAsync(ulong.Parse(serverId));
 
             if (!settings.ExternalApiKeys.TryGetValue(serverId, out var apiKey))
-                Result<RaidHelperResponse>.Failure("Auction Bot needs to be authorized to use Raid-Helper DKP in this server!");
+                return Result<RaidHelperResponse>.Failure("Auction Bot needs to be authorized to use Raid-Helper DKP in this server!");
 
             var url = _configuration[$"Url:{RaidHelperClient.SectionName}"];
 
@@ -85,7 +85,7 @@ namespace Agora.Shared.EconomyFactory
             var response = await httpClient.SendAsync(request);
 
             if (!response.IsSuccessStatusCode)
-                Result<RaidHelperResponse>.Failure($"Failed to process DKP request: {response.ReasonPhrase}");
+                return Result<RaidHelperResponse>.Failure($"Failed to process DKP request: {response.ReasonPhrase}");
 
             var responseContent = await response.Content.ReadAsStringAsync();
 

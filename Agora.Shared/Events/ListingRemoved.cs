@@ -30,14 +30,19 @@ namespace Agora.Shared.Events
 
             if (guildSettings.EconomyType == "Disabled") return;
 
-            var product = notification.ProductListing.Product;
+            var maxPayout = guildSettings.Features.HasFlag(SettingsFlags.SealedPayout);
+
+            var listing = notification.ProductListing;
             var economy = _factory.Create(guildSettings.EconomyType);
-            var submission = product switch
+            var submission = listing switch
             {
-                AuctionItem auction => auction.Offers.OrderByDescending(x => x.SubmittedOn).First().Amount,
-                MarketItem market => market.Offers.OrderByDescending(x => x.SubmittedOn).First().Amount,
-                GiveawayItem giveaway => notification.ProductListing is StandardGiveaway ? null : Money.Create(giveaway.Offers.Sum(x => giveaway.TicketPrice.Value), giveaway.TicketPrice.Currency),
-                _ => throw new InvalidOperationException($"Cannot increase balances for {product.GetType()}")
+                VickreyAuction and { Product: AuctionItem item } => item.IsReversed 
+                    ? item.Offers.OrderBy(x => x.Amount.Value).First().Amount 
+                    : item.Offers.OrderByDescending(x => x.Amount.Value).Skip(maxPayout || item.Offers.Count < 2 ? 0 : 1).First().Amount,
+                { Product: AuctionItem auction }  => auction.Offers.OrderByDescending(x => x.SubmittedOn).First().Amount,
+                { Product: MarketItem market } => market.Offers.OrderByDescending(x => x.SubmittedOn).First().Amount,
+                { Product: GiveawayItem giveaway } => notification.ProductListing is StandardGiveaway ? null : Money.Create(giveaway.Offers.Sum(x => giveaway.TicketPrice.Value), giveaway.TicketPrice.Currency),
+                _ => throw new InvalidOperationException($"Cannot increase balances for {listing.Product.GetType()}")
             };
 
             if (submission is null) return;
@@ -136,7 +141,7 @@ namespace Agora.Shared.Events
             }
         }
 
-        private static async Task AuctionRemovedAsync(ListingRemovedNotification notification, AuctionItem item, IEconomy economy, CancellationToken cancellationToken)
+        private async Task AuctionRemovedAsync(ListingRemovedNotification notification, AuctionItem item, IEconomy economy, CancellationToken cancellationToken)
         {
             var emporiumId = notification.ProductListing.Owner.EmporiumId.Value;
 
@@ -168,8 +173,9 @@ namespace Agora.Shared.Events
                     if (notification.ProductListing is not VickreyAuction listing) return;
                     if (item.Offers.Count == 1) return;
 
-                    var orderedOffers = item.Offers.OrderByDescending(x => x.Amount.Value).ToArray();
-                    var refund = Money.Create(orderedOffers[0].Amount.Value - orderedOffers[1].Amount.Value, item.StartingPrice.Currency);
+                    var orderedOffers = item.IsReversed 
+                        ? item.Offers.OrderBy(x => x.Amount.Value).ToArray()
+                        : item.Offers.OrderByDescending(x => x.Amount.Value).ToArray();
 
                     foreach (var bid in orderedOffers.Skip(1))
                     {
@@ -179,9 +185,16 @@ namespace Agora.Shared.Events
                         await Task.Delay(200, cancellationToken);
                     }
 
+                    var guildSettings = await _guildSettingsService.GetGuildSettingsAsync(notification.ProductListing.Owner.EmporiumId.Value);
+                    var maxPayout = guildSettings.Features.HasFlag(SettingsFlags.SealedPayout);
+
+                    if (maxPayout) listing.UpdateCurrentOffer(orderedOffers[0]);
+                    if (maxPayout || item.IsReversed) return;
+                    
                     var winningBid = orderedOffers[0];
                     var winner = EmporiumUser.Create(new EmporiumId(emporiumId), winningBid.UserId, winningBid.UserReference);
-
+                    var refund = Money.Create(orderedOffers[0].Amount.Value - orderedOffers[1].Amount.Value, item.StartingPrice.Currency);
+                    
                     await economy.IncreaseBalanceAsync(winner, refund, $"Partial bid refund for {item.Quantity} {item.Title}");
 
                     break;
