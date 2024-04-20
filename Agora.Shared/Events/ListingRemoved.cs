@@ -70,7 +70,7 @@ namespace Agora.Shared.Events
             var emporiumId = notification.ProductListing.Owner.EmporiumId.Value;
             var guildSettings = await _guildSettingsService.GetGuildSettingsAsync(emporiumId);
 
-            if (guildSettings.EconomyType == "Disabled") return;
+            if (guildSettings.EconomyType == "Disabled" && notification.ProductListing is not VickreyAuction) return;
 
             var economy = _factory.Create(guildSettings.EconomyType);
 
@@ -177,6 +177,13 @@ namespace Agora.Shared.Events
                         ? item.Offers.OrderBy(x => x.Amount.Value).ToArray()
                         : item.Offers.OrderByDescending(x => x.Amount.Value).ToArray();
 
+                    var guildSettings = await _guildSettingsService.GetGuildSettingsAsync(notification.ProductListing.Owner.EmporiumId.Value);
+                    var maxPayout = guildSettings.Features.HasFlag(SettingsFlags.SealedPayout);
+
+                    if (maxPayout) listing.UpdateCurrentOffer(orderedOffers[0]);
+
+                    if (guildSettings.EconomyType == "Disabled") return;
+
                     foreach (var bid in orderedOffers.Skip(1))
                     {
                         var user = EmporiumUser.Create(new EmporiumId(emporiumId), bid.UserId, bid.UserReference);
@@ -185,10 +192,6 @@ namespace Agora.Shared.Events
                         await Task.Delay(200, cancellationToken);
                     }
 
-                    var guildSettings = await _guildSettingsService.GetGuildSettingsAsync(notification.ProductListing.Owner.EmporiumId.Value);
-                    var maxPayout = guildSettings.Features.HasFlag(SettingsFlags.SealedPayout);
-
-                    if (maxPayout) listing.UpdateCurrentOffer(orderedOffers[0]);
                     if (maxPayout || item.IsReversed) return;
                     
                     var winningBid = orderedOffers[0];
