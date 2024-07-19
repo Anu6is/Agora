@@ -24,6 +24,7 @@
     <ProjectReference Include="..\..\..\Ophois\Emporia\Emporia.Migrations\Emporia.Migrations.csproj" />
     <ProjectReference Include="..\..\Agora.Addons.Administration\Agora.Addons.Administration.csproj" />
     <ProjectReference Include="..\..\Agora.Addons.Disqord\Agora.Addons.Disqord\Agora.Addons.Disqord.csproj" />
+    <ProjectReference Include="..\..\Agora.Addons.Disqord\Extension.CustomAnnouncements\Extension.CustomAnnouncements.csproj" />
     <ProjectReference Include="..\..\Agora.Addons.Disqord\Extension.TransactionFees\Extension.TransactionFees.csproj" />
     <ProjectReference Include="..\Agora.API\Agora.API.csproj" />
   </ItemGroup>
