@@ -33,7 +33,9 @@ namespace Agora.Shared.Extensions
         public static IHostBuilder ConfigureCustomAgoraServices(this IHostBuilder builder)
         {
             return builder.ConfigureServices((context, services)
-                => services.ConfigureAgora().WithAgoraSharedServices(context.Configuration).AddEconomyServices(context.Configuration));
+                => services.ConfigureAgora()
+                           .WithAgoraSharedServices(context.Configuration)
+                           .AddEconomyServices());
         }
 
         public static IServiceCollection ConfigureAgora(this IServiceCollection services)
@@ -88,16 +90,8 @@ namespace Agora.Shared.Extensions
                 services.SetLifetime(scope, type, serviceType);
         }
 
-        public static IServiceCollection AddEconomyServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddEconomyServices(this IServiceCollection services)
         {
-            var unbelievaClientConfig = new UnbelievaClientConfig() { Token = configuration["Token:UnbelievaBoat"] };
-
-            services.AddSingleton(unbelievaClientConfig);
-            services.AddSingleton<UnbelievaClient>();
-
-            services.AddHttpClient(RaidHelperClient.SectionName);
-            services.AddSingleton<RaidHelperClient>();
-
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddMediatR(x => x.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()).Lifetime = Lifetime.Scoped);
 

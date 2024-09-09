@@ -36,6 +36,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Extension.TransactionFees",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Extension.CustomAnnouncements", "..\Agora.Addons.Disqord\Extension.CustomAnnouncements\Extension.CustomAnnouncements.csproj", "{139E125C-C021-4E89-90AB-47E4740B8FE1}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Extension.Economies", "..\Agora.Addons.Disqord\Extension.Economies\Extension.Economies.csproj", "{55C23B79-3D20-445F-A6F4-E84E8B8A1A35}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -98,6 +100,10 @@ Global
 		{139E125C-C021-4E89-90AB-47E4740B8FE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{139E125C-C021-4E89-90AB-47E4740B8FE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{139E125C-C021-4E89-90AB-47E4740B8FE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55C23B79-3D20-445F-A6F4-E84E8B8A1A35}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55C23B79-3D20-445F-A6F4-E84E8B8A1A35}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55C23B79-3D20-445F-A6F4-E84E8B8A1A35}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55C23B79-3D20-445F-A6F4-E84E8B8A1A35}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
