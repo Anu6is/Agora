@@ -8,7 +8,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Agora.Shared.EconomyFactory
+namespace Extension.Economies.RaidHelper
 {
     [AgoraService(AgoraServiceAttribute.ServiceLifetime.Singleton)]
     public class RaidHelperClient : AgoraService
@@ -71,9 +71,9 @@ namespace Agora.Shared.EconomyFactory
             if (!settings.ExternalApiKeys.TryGetValue(serverId, out var apiKey))
                 return Result<RaidHelperResponse>.Failure("Auction Bot needs to be authorized to use Raid-Helper DKP in this server!");
 
-            var url = _configuration[$"Url:{RaidHelperClient.SectionName}"];
+            var url = _configuration[$"Url:{SectionName}"];
 
-            using var httpClient = _httpClientFactory.CreateClient(RaidHelperClient.SectionName);
+            using var httpClient = _httpClientFactory.CreateClient(SectionName);
             httpClient.BaseAddress = new Uri(url);
             httpClient.DefaultRequestHeaders.Add("Authorization", apiKey);
 
@@ -89,7 +89,7 @@ namespace Agora.Shared.EconomyFactory
 
             var responseContent = await response.Content.ReadAsStringAsync();
 
-            return Result.Success(JsonSerializer.Deserialize<ResponseList>(responseContent).Results.First());
+            return Result.Success(JsonSerializer.Deserialize<ResponseList>(responseContent)!.Results.First());
         }
     }
 

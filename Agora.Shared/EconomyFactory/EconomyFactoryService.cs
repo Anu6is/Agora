@@ -1,28 +1,33 @@
 ﻿using Agora.Shared.Attributes;
 using Agora.Shared.Services;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Agora.Shared.EconomyFactory
-{
-    public enum EconomyType { Disabled, AuctionBot, UnbelievaBoat, RaidHelper }
+namespace Agora.Shared.EconomyFactory;
 
-    [AgoraService(AgoraServiceAttribute.ServiceLifetime.Transient)]
-    public class EconomyFactoryService : AgoraService
+[AgoraService(AgoraServiceAttribute.ServiceLifetime.Transient)]
+public class EconomyFactoryService : AgoraService
+{
+    private readonly IServiceProvider _serviceProvider;
+    private readonly Dictionary<string, Func<IEconomy>> _economyFactories;
+
+    public EconomyFactoryService(IServiceProvider services, IEnumerable<IEconomyProvider> economyProviders, ILogger<EconomyFactoryService> logger) : base(logger)
     {
-        private readonly IServiceProvider _serviceProvider;
-        public EconomyFactoryService(IServiceProvider services, ILogger<EconomyFactoryService> logger) : base(logger)
+        _serviceProvider = services;
+        _economyFactories = new Dictionary<string, Func<IEconomy>>();
+
+        foreach (var provider in economyProviders)
         {
-            _serviceProvider = services;
+            _economyFactories[provider.EconomyType] = () => provider.CreateEconomy(_serviceProvider);
+        }
+    }
+
+    public IEconomy Create(string economyType = "Disabled")
+    {
+        if (_economyFactories.TryGetValue(economyType, out var factory))
+        {
+            return factory();
         }
 
-        public IEconomy Create(string economyType = "Disabled") => economyType switch
-        {
-            nameof(EconomyType.Disabled) => _serviceProvider.GetRequiredService<PseudoEconomy>(),
-            nameof(EconomyType.AuctionBot) => _serviceProvider.GetRequiredService<AgoraEconomy>(),
-            nameof(EconomyType.UnbelievaBoat) => _serviceProvider.GetRequiredService<UnbelievaBoatEconomy>(),
-            nameof(EconomyType.RaidHelper) => _serviceProvider.GetRequiredService<RaidHelperEconomy>(),
-            _ => throw new NotImplementedException($"{economyType} is not a supported economy interface")
-        };
+        throw new NotImplementedException($"No implementation exists for {economyType}");
     }
 }

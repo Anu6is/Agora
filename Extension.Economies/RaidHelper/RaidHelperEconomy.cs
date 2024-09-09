@@ -1,9 +1,10 @@
 ﻿using Agora.Shared.Attributes;
+using Agora.Shared.EconomyFactory;
 using Emporia.Domain.Common;
 using Emporia.Domain.Services;
 using Microsoft.Extensions.Logging;
 
-namespace Agora.Shared.EconomyFactory
+namespace Extension.Economies.RaidHelper
 {
     [AgoraService(AgoraServiceAttribute.ServiceLifetime.Transient)]
     public class RaidHelperEconomy : EconomyService
@@ -48,7 +49,7 @@ namespace Agora.Shared.EconomyFactory
             return Result.Success(Money.Create(dkp, amount.Currency));
         }
 
-        public override async ValueTask<IResult>SetBalanceAsync(IEmporiumUser user, Money amount, string reason = "")
+        public override async ValueTask<IResult> SetBalanceAsync(IEmporiumUser user, Money amount, string reason = "")
         {
             var result = await _raidHelperClient.SetUserBalanceAsync(user.EmporiumId.Value, user.ReferenceNumber.Value, amount.Value, reason);
 
