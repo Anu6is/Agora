@@ -387,3 +387,4 @@ FodyWeavers.xsd
 *.msm
 *.msp
 /Agora.Discord/nuget.config
+/nuget.config
