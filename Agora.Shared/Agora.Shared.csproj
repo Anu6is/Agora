@@ -7,7 +7,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Agora.Shared</Title>
     <Authors>Anu6is</Authors>
-	<Version>2.1.0</Version>
+	<Version>2.1.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
