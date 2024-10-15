@@ -51,7 +51,7 @@ namespace Agora.Shared.Events
             else if (notification.Offer is Payment payment && payment.Amount < (notification.Listing.Product as MarketItem).CurrentPrice)
             {
                 if (notification.Listing is not StandardMarket market || !market.AllowOffers) return;
-                
+
                 await economy.IncreaseBalanceAsync(economyUser, payment.Amount, $"Cancel offer made for {notification.Listing.Product.Quantity} {notification.Listing.Product.Title}");
 
                 var marketItem = notification.Listing.Product as MarketItem;

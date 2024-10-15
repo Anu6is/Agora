@@ -7,7 +7,7 @@ namespace Agora.API.Features.Guilds
     public record GuildList(Guild[] Guilds);
     public record Guild(ulong Id, string Name, string Icon, bool Owner, ulong Permissions, string[] Features);
 
-    public class Endpoint: EndpointWithoutRequest<IEnumerable<Guild>>
+    public class Endpoint : EndpointWithoutRequest<IEnumerable<Guild>>
     {
         public IDiscordBotService BotService { get; set; }
         public DiscordApiService ApiService { get; set; }

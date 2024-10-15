@@ -1,23 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Agora.Shared" Version="2.*" />
-    <PackageReference Include="Auth0.AuthenticationApi" Version="7.22.3" />
-    <PackageReference Include="Auth0.ManagementApi" Version="7.22.3" />
-    <PackageReference Include="FastEndpoints" Version="5.13.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.19" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Auth0.AuthenticationApi" Version="7.27.0" />
+    <PackageReference Include="Auth0.ManagementApi" Version="7.27.0" />
+    <PackageReference Include="FastEndpoints" Version="5.30.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
     <PackageReference Include="Nito.AsyncEx.Coordination" Version="5.1.2" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Features\Settings\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Agora.Shared\Agora.Shared.csproj" />
   </ItemGroup>
 
 </Project>

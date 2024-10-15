@@ -21,8 +21,8 @@ namespace Agora.API.Features.Shard
             var state = BotService.GetShardState(index);
             var status = state == 0
                 ? "Offline"
-                : state == 4 
-                    ? "Online" 
+                : state == 4
+                    ? "Online"
                     : "Connecting";
 
             await SendAsync(new ShardStatus(state, status));

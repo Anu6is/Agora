@@ -88,8 +88,8 @@ namespace Agora.Shared.Cache
                                var result = await mediator.Send(new GetListingRequirementDetailsQuery(guildId, listingType), cts);
 
                                if (result.Data is not null) return result.Data;
-                                   
-                               var requirements =  await mediator.Send(new CreateListingRequirementsCommand(guildId, listingType), cts);
+
+                               var requirements = await mediator.Send(new CreateListingRequirementsCommand(guildId, listingType), cts);
 
                                if (requirements.IsSuccessful) return requirements.Data;
 

@@ -42,7 +42,7 @@ namespace Agora.Shared.Events
             var showroom = await _dataAccessor.Transaction<IReadRepository<Showroom>>().SingleOrDefaultAsync(new ShowroomSpec(filter), cancellationToken);
             var listing = showroom.Listings.FirstOrDefault();
 
-            if (listing?.Product is AuctionItem auction && auction.Offers.Count > 1) 
+            if (listing?.Product is AuctionItem auction && auction.Offers.Count > 1)
                 await ReturnPreviousBidAsync(notification, auction, economy);
             if (listing is StandardMarket { AllowOffers: true })
                 await ReturnPreviousOfferAsync(listing.Owner.EmporiumId, (MarketItem)listing.Product, economy);

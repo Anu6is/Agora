@@ -3,7 +3,6 @@ using Emporia.Domain.Common;
 using Emporia.Extensions.Discord;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Sentry;
 
 namespace Agora.Shared
 {
@@ -12,7 +11,7 @@ namespace Agora.Shared
         ILogger Logger { get; }
         IDataAccessor Data { get; }
         IMediator Mediator { get; }
-        ITransaction Transaction { get; }
+        ITransactionTracer Transaction { get; }
         IEmporiaCacheService Cache { get; }
         IDiscordGuildSettings Settings { get; }
         IGuildSettingsService SettingsService { get; }

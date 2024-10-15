@@ -53,7 +53,7 @@ namespace Agora.Shared.Services
 
                         if (listing is not null && await _cache.GetProcessingItemAsync(listing) is not null)
                         {
-                             
+
                             OnRequestProcessed(new RequestEventArgs(item.Request, Result.Failure<TResponse>("Listing is no longer available")));
                             continue;
                         }

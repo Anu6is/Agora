@@ -15,6 +15,7 @@ namespace Agora.API
             builder.Services.AddResponseCaching();
             builder.Services.AddTransient<AccessTokenService>();
             builder.Services.AddHttpClient<DiscordApiService>(client => client.BaseAddress = DiscordApiService.BaseURI);
+            builder.Services.AddAuthorization();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, c =>
                             {
@@ -37,11 +38,11 @@ namespace Agora.API
                                .AllowAnyHeader()
                                .AllowAnyMethod()
                                .AllowCredentials()
-                               .WithExposedHeaders("Access-Control-Allow-Origin")); 
+                               .WithExposedHeaders("Access-Control-Allow-Origin"));
             app.UseResponseCaching();
             app.UseFastEndpoints();
             app.UseAuthorization();
-            
+
             app.Urls.Add(app.Configuration["Endpoints:WebApi"]!);
 
             return app;
