@@ -23,7 +23,7 @@ namespace Agora.API.Features.Guilds
             var userGuilds = await ApiService.GetGuildsAsync(userId!);
             var mutualGuilds = BotService.GetMutualGuilds(userGuilds.Select(x => x.Id));
 
-            await SendAsync(userGuilds.Where(guild => mutualGuilds.Contains(guild.Id)));
+            await SendAsync(userGuilds.Where(guild => mutualGuilds.Contains(guild.Id)), cancellation: c);
         }
     }
 }

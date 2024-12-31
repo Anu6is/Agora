@@ -25,7 +25,7 @@ namespace Agora.API.Features.Shard
                     ? "Online"
                     : "Connecting";
 
-            await SendAsync(new ShardStatus(state, status));
+            await SendAsync(new ShardStatus(state, status), cancellation: c);
         }
     }
 }
