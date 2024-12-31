@@ -27,6 +27,7 @@
     <ProjectReference Include="..\..\Agora.Addons.Disqord\Extension.CustomAnnouncements\Extension.CustomAnnouncements.csproj" />
     <ProjectReference Include="..\..\Agora.Addons.Disqord\Extension.Economies\Extension.Economies.csproj" />
     <ProjectReference Include="..\..\Agora.Addons.Disqord\Extension.TransactionFees\Extension.TransactionFees.csproj" />
+    <ProjectReference Include="..\..\Agora.Addons.Translations\Agora.Addons.Translations.csproj" />
     <ProjectReference Include="..\Agora.API\Agora.API.csproj" />
   </ItemGroup>
 

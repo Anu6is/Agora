@@ -28,7 +28,7 @@ namespace Agora.API.Features.Statistics
             await SendAsync(new Statistics(BotService.GetTotalGuilds().ToMetric(decimals: 1),
                                          showrooms.Data.ToMetric(decimals: 1),
                                          BotService.GetTotalMembers().ToMetric(decimals: 1),
-                                         listings.Data.ToMetric(decimals: 1)));
+                                         listings.Data.ToMetric(decimals: 1)), cancellation: c);
         }
     }
 }

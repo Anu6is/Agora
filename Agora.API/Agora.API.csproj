@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Features\Settings\**" />
+    <EmbeddedResource Remove="Features\Settings\**" />
+    <None Remove="Features\Settings\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Agora.Shared" Version="2.2.0" />
     <PackageReference Include="Auth0.AuthenticationApi" Version="7.27.0" />
     <PackageReference Include="Auth0.ManagementApi" Version="7.27.0" />
@@ -14,10 +20,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
     <PackageReference Include="Nito.AsyncEx.Coordination" Version="5.1.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Features\Settings\" />
   </ItemGroup>
 
 </Project>
