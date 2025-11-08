@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Agora.Shared" Version="2.*" />
+    <PackageReference Include="Agora.Shared" Version="2.2.3" />
     <PackageReference Include="Auth0.AuthenticationApi" Version="7.27.0" />
     <PackageReference Include="Auth0.ManagementApi" Version="7.27.0" />
     <PackageReference Include="FastEndpoints" Version="5.30.0" />
