@@ -7,12 +7,12 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Agora.Shared</Title>
     <Authors>Anu6is</Authors>
-	<Version>2.2.2</Version>
+	<Version>2.2.3</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Believe.Net" Version="3.0.0" />
-    <PackageReference Include="Emporia.Extensions.Discord" Version="2.*" />
+    <PackageReference Include="Emporia.Extensions.Discord" Version="2.0.3" />
     <PackageReference Include="Humanizer.Core" Version="2.14.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
